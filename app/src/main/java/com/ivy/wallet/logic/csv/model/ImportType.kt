@@ -1,5 +1,6 @@
 package com.ivy.wallet.logic.csv.model
 
+import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -59,8 +60,8 @@ enum class ImportType {
         FINANCISTO -> R.drawable.financisto_logo
     }
 
-    fun listName(): String = when (this) {
-        IVY -> "Ivy Wallet"
+    fun listName(context: Context): String = when (this) {
+        IVY -> context.getString(R.string.app_name)
         MONEY_MANAGER -> "Money Manager"
         WALLET_BY_BUDGET_BAKERS -> "Wallet by BudgetBakers"
         SPENDEE -> "Spendee"
@@ -72,9 +73,9 @@ enum class ImportType {
         FINANCISTO -> "Financisto"
     }
 
-    fun appName(): String = when (this) {
-        IVY -> "Ivy Wallet"
-        else -> listName()
+    fun appName(context: Context): String = when (this) {
+        IVY -> context.getString(R.string.app_name)
+        else -> listName(context)
     }
 
     @Composable

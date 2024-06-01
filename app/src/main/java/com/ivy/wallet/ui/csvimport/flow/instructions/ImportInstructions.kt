@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
@@ -69,7 +70,7 @@ fun BoxWithConstraintsScope.ImportInstructions(
 
             Text(
                 modifier = Modifier.padding(start = 32.dp),
-                text = "How to import",
+                text = stringResource(R.string.how_to_import),
                 style = UI.typo.h2.style(
                     fontWeight = FontWeight.Black
                 )
@@ -79,7 +80,7 @@ fun BoxWithConstraintsScope.ImportInstructions(
 
             Text(
                 modifier = Modifier.padding(start = 32.dp),
-                text = "open",
+                text = stringResource(R.string.open),
                 style = UI.typo.b2.style(
                     color = Gray,
                     fontWeight = Bold
@@ -104,7 +105,7 @@ fun BoxWithConstraintsScope.ImportInstructions(
 
             Text(
                 modifier = Modifier.padding(start = 32.dp),
-                text = "Steps",
+                text = stringResource(R.string.steps),
                 style = UI.typo.b1.style(
                     fontWeight = FontWeight.Black
                 )
@@ -346,7 +347,7 @@ private fun App(
         Spacer(Modifier.width(16.dp))
 
         Text(
-            text = importType.appName(),
+            text = importType.appName(LocalContext.current),
             style = UI.typo.b2.style(
                 fontWeight = Bold
             )
@@ -362,10 +363,9 @@ private fun Preview() {
         ImportInstructions(
             hasSkip = true,
             importType = ImportType.MONEY_MANAGER,
-            onSkip = {}
-        ) {
-
-        }
+            onSkip = {},
+            onUploadClick = {}
+        )
     }
 }
 
