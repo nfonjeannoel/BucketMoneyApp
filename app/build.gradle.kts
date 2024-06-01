@@ -58,7 +58,7 @@ android {
                 "proguard-rules.pro"
             )
 
-            resValue("string", "app_name", "Ivy Wallet")
+//            resValue("string", "app_name", "Ivy Wallet")
         }
 
         debug {
@@ -69,7 +69,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
 
             applicationIdSuffix = ".debug"
-            resValue("string", "app_name", "Ivy Wallet Debug")
+//            resValue("string", "app_name", "Ivy Wallet Debug")
         }
     }
 

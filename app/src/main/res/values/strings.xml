@@ -1,2 +1,20 @@
 <resources>
+    <string name="app_name">Bucket Money</string>
+    <string name="bucket_money">Bucket Money</string>
+    <string name="your_personal_money_manager">Your personal money manager</string>
+    <string name="sync_your_data_on_the_cloud">SYNC YOUR DATA ON THE CLOUD</string>
+    <string name="access_your_transactions_from_any_device">Access your transactions from any device.</string>
+    <string name="error_try_again">Error. Try again: %1$s</string>
+    <string name="signing_in">Signing in...</string>
+    <string name="success">Success!</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="offline_account">Offline account</string>
+    <string name="or_enter_with_offline_account">OR ENTER WITH OFFLINE ACCOUNT</string>
+    <string name="offline_account_data_saved_locally_message">Your data will be saved locally (only on your phone) and won\'t be synced with the cloud. You risk losing it if you uninstall the app or change your device. You can always activate sync later if you decide to.</string>
+    <string name="import_csv_file">Import CSV file</string>
+    <string name="from_or_another_app">from %1$s or another app</string>
+    <string name="import_backup_message">Importing a backup file from another can take up to 5 min. You can always import your data later if you want to.</string>
+    <string name="import_backup_file">Import backup file</string>
+    <string name="start_fresh">Start fresh</string>
+    <string name="failed_to_connect_to_server">Failed to connect to server.</string>
 </resources>

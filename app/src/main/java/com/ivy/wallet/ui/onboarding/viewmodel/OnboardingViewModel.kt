@@ -1,10 +1,13 @@
 package com.ivy.wallet.ui.onboarding.viewmodel
 
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ivy.design.l0_system.Theme
 import com.ivy.design.navigation.Navigation
+import com.ivy.wallet.R
 import com.ivy.wallet.analytics.IvyAnalytics
 import com.ivy.wallet.base.*
 import com.ivy.wallet.logic.*
@@ -30,6 +33,7 @@ import com.ivy.wallet.ui.Onboarding
 import com.ivy.wallet.ui.onboarding.OnboardingState
 import com.ivy.wallet.ui.onboarding.model.AccountBalance
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -47,6 +51,7 @@ class OnboardingViewModel @Inject constructor(
     private val categoryCreator: CategoryCreator,
     private val categoryDao: CategoryDao,
     private val accountCreator: AccountCreator,
+    @ApplicationContext private val appContext: Context,
 
     //Only OnboardingRouter stuff
     sharedPrefs: SharedPrefs,
@@ -144,6 +149,10 @@ class OnboardingViewModel @Inject constructor(
 
     //Step 1 ---------------------------------------------------------------------------------------
     fun loginWithGoogle() {
+        // implement custom backend
+        _opGoogleSignIn.value =
+            OpResult.faliure(appContext.getString(R.string.failed_to_connect_to_server))
+        return
         ivyContext.googleSignIn { idToken ->
             if (idToken != null) {
                 _opGoogleSignIn.value = OpResult.loading()
