@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Bucket Money</string>
     <string name="bucket_money">Bucket Money</string>
-    <string name="your_personal_money_manager">Your personal money manager</string>
+    <string name="your_personal_money_manager">Your AI enhanced money manager</string>
     <string name="sync_your_data_on_the_cloud">SYNC YOUR DATA ON THE CLOUD</string>
     <string name="access_your_transactions_from_any_device">Access your transactions from any device.</string>
     <string name="error_try_again">Error. Try again: %1$s</string>
-    <string name="signing_in">Signing in...</string>
+    <string name="signing_in">Signing in…</string>
     <string name="success">Success!</string>
     <string name="login_with_google">Login with Google</string>
     <string name="offline_account">Offline account</string>
@@ -23,4 +23,12 @@
     <string name="steps">Steps</string>
     <string name="export_data">Export Data</string>
     <string name="upload_csv_zip_file">Upload CSV/ZIP file</string>
+    <string name="set_currency">Set currency</string>
+    <string name="search_usd_eur_gbp_btc_etc">Search (USD, EUR, GBP, BTC, etc)</string>
+    <string name="pre_selected">Pre-selected</string>
+    <string name="selected">Selected</string>
+    <string name="crypto">Crypto</string>
+    <string name="set">Set</string>
+    <string name="add_accounts">Add accounts</string>
+    <string name="suggestions">Suggestions</string>
 </resources>

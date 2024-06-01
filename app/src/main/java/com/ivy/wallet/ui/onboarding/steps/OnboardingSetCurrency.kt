@@ -5,6 +5,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -13,6 +14,7 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.ivy.design.api.navigation
 import com.ivy.design.l0_system.UI
 import com.ivy.design.l0_system.style
+import com.ivy.wallet.R
 import com.ivy.wallet.base.setStatusBarDarkTextCompat
 import com.ivy.wallet.model.IvyCurrency
 import com.ivy.wallet.ui.IvyWalletPreview
@@ -57,7 +59,7 @@ fun BoxWithConstraintsScope.OnboardingSetCurrency(
 
             Text(
                 modifier = Modifier.padding(horizontal = 32.dp),
-                text = "Set currency",
+                text = stringResource(R.string.set_currency),
                 style = UI.typo.h2.style(
                     fontWeight = FontWeight.Black
                 )
@@ -93,7 +95,7 @@ fun BoxWithConstraintsScope.OnboardingSetCurrency(
             .navigationBarsPadding()
             .padding(bottom = 20.dp),
 
-        text = "Set",
+        text = stringResource(R.string.set),
         textColor = White,
         backgroundGradient = GradientIvy,
         hasNext = true,

@@ -60,10 +60,17 @@ class PreloadDataLogic(
             balance = 0.0
         ),
         CreateAccountData(
-            name = "Revolut",
+            name = "MoMo",
             currency = baseCurrency,
             color = Blue,
-            icon = "revolut",
+            icon = "momo",
+            balance = 0.0
+        ),
+        CreateAccountData(
+            name = "OM",
+            currency = baseCurrency,
+            color = Purple1,
+            icon = "om",
             balance = 0.0
         ),
     )
