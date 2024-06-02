@@ -10,6 +10,7 @@ import kotlin.math.truncate
 const val MILLION = 1000000
 const val N_100K = 100000
 const val THOUSAND = 1000
+const val TEN_THOUSAND = 10000
 
 fun String.amountToDoubleOrNull(): Double? {
     return this.normalizeAmount().toDoubleOrNull()
@@ -119,8 +120,8 @@ fun hasSignificantDecimalPart(number: Double): Boolean {
     return abs(number - intPart) >= 0.009
 }
 
-fun shouldShortAmount(amount: Double): Boolean {
-    return abs(amount) >= N_100K
+fun shouldShortAmount(amount: Double, shortenTarget: Int = N_100K): Boolean {
+    return abs(amount) >= shortenTarget
 }
 
 fun formatInt(number: Int): String {

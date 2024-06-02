@@ -16,19 +16,19 @@ object Constants {
 
     const val SHARE_TEXT = "Check out an AI enhanced person finance app that helps you manage your money better. It's called Bucket Money"
 
-    const val URL_IVY_WALLET_REPO = "https://github.com/ILIYANGERMANOV/ivy-wallet"
+    const val URL_IVY_WALLET_REPO = "https://github.com/nfonjeannoel"
 
-    const val URL_ROADMAP = "https://github.com/ILIYANGERMANOV/ivy-wallet/projects/1"
+    const val URL_ROADMAP = "https://github.com/nfonjeannoel"
 
     const val URL_HELP_CENTER = "https://www.goodreads.com/quotes/tag/money-management"
 
     const val URL_IVY_WALLET_GOOGLE_PLAY =
-        "https://play.google.com/store/apps/details?id=com.ivy.wallet"
+        "https://github.com/nfonjeannoel"
 
     const val CATEGORY_UNSPECIFIED_NAME = "Unspecified"
 
     const val URL_IVY_CONTRIBUTORS =
-        "https://github.com/ILIYANGERMANOV/ivy-wallet#contributors-see-graph"
+        "https://github.com/nfonjeannoel"
 
     const val USER_INACTIVITY_TIME_LIMIT = 60  //Time in seconds
 

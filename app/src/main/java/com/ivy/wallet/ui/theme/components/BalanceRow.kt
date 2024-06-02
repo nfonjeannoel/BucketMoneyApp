@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ivy.design.l0_system.UI
 import com.ivy.design.l0_system.style
+import com.ivy.wallet.base.N_100K
 import com.ivy.wallet.base.decimalPartFormatted
 import com.ivy.wallet.base.shortenAmount
 import com.ivy.wallet.base.shouldShortAmount
@@ -63,6 +64,8 @@ fun BalanceRowMini(
     balanceAmountPrefix: String? = null,
     currencyUpfront: Boolean = true,
     shortenBigNumbers: Boolean = false,
+    shortenTarget: Int = N_100K,
+    shouldIncludeCurrency: Boolean = true
 ) {
     BalanceRow(
         modifier = modifier,
@@ -79,7 +82,9 @@ fun BalanceRowMini(
 
         balanceAmountPrefix = balanceAmountPrefix,
         currencyUpfront = currencyUpfront,
-        shortenBigNumbers = shortenBigNumbers
+        shortenBigNumbers = shortenBigNumbers,
+        shortenTarget = shortenTarget,
+        shouldIncludeCurrency = shouldIncludeCurrency
     )
 }
 
@@ -100,14 +105,16 @@ fun BalanceRow(
     currencyUpfront: Boolean = true,
     balanceAmountPrefix: String? = null,
     shortenBigNumbers: Boolean = false,
+    shortenTarget: Int = N_100K,
+    shouldIncludeCurrency: Boolean = true
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val shortAmount = shortenBigNumbers && shouldShortAmount(balance)
+        val shortAmount = shortenBigNumbers && shouldShortAmount(balance, shortenTarget=shortenTarget)
 
-        if (currencyUpfront) {
+        if (currencyUpfront && shouldIncludeCurrency) {
             Currency(
                 currency = currency,
                 textColor = textColor,
@@ -161,7 +168,7 @@ fun BalanceRow(
         }
 
 
-        if (!currencyUpfront) {
+        if (!currencyUpfront && shouldIncludeCurrency) {
             Spacer(Modifier.width(spacerCurrency))
 
             Currency(

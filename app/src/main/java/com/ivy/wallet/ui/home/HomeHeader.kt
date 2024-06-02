@@ -133,7 +133,9 @@ private fun HeaderStickyRow(
                         },
                     currency = currency,
                     balance = balance,
-                    shortenBigNumbers = true
+                    shortenBigNumbers = true,
+                    shortenTarget = THOUSAND,
+                    shouldIncludeCurrency = false
                 )
             }
         }
@@ -150,6 +152,7 @@ private fun HeaderStickyRow(
         ) {
             Toast.makeText(context, "AI analysis", Toast.LENGTH_SHORT).show()
         }
+        Spacer(Modifier.width(2.dp))
 
         IvyOutlinedButton(
             modifier = Modifier.horizontalSwipeListener(
@@ -169,7 +172,7 @@ private fun HeaderStickyRow(
 
 
 
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(2.dp))
 
         Spacer(Modifier.width(40.dp)) //settings menu button spacer
 

@@ -6,6 +6,7 @@ import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.ivy.wallet.R
 import com.ivy.wallet.base.atEndOfDay
 import com.ivy.wallet.base.dateNowUTC
 import com.ivy.wallet.persistence.SharedPrefs
@@ -48,7 +49,8 @@ class TransactionReminderWorker @AssistedInject constructor(
                     channel = IvyNotificationChannel.TRANSACTION_REMINDER,
                     priority = NotificationCompat.PRIORITY_HIGH
                 )
-                .setContentTitle("Ivy Wallet")
+                .setContentTitle("Bucket Money")
+//                .setContentTitle(applicationContext.getString(R.string.app_name))
                 .setContentText(randomText())
                 .setContentIntent(
                     PendingIntent.getActivity(
