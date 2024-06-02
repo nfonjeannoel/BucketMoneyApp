@@ -275,21 +275,21 @@ private fun BoxWithConstraintsScope.UI(
             val ivyActivity = LocalContext.current as IvyActivity
             SettingsPrimaryButton(
                 icon = R.drawable.ic_custom_star_m,
-                text = "Rate us on Google Play",
+                text = "Get AI Insights",
                 backgroundGradient = GradientIvy
             ) {
-                ivyActivity.reviewIvyWallet(dismissReviewCard = false)
+//                ivyActivity.reviewIvyWallet(dismissReviewCard = false)
             }
 
-            Spacer(Modifier.height(12.dp))
+//            Spacer(Modifier.height(12.dp))
 
-            SettingsPrimaryButton(
-                icon = R.drawable.ic_custom_family_m,
-                text = "Share Ivy Wallet",
-                backgroundGradient = Gradient.solid(Red3)
-            ) {
-                ivyActivity.shareIvyWallet()
-            }
+//            SettingsPrimaryButton(
+//                icon = R.drawable.ic_custom_family_m,
+//                text = "Share Bucket Money",
+//                backgroundGradient = Gradient.solid(Red3)
+//            ) {
+//                ivyActivity.shareIvyWallet()
+//            }
         }
 
         item {
@@ -299,23 +299,23 @@ private fun BoxWithConstraintsScope.UI(
 
             HelpCenter()
 
-            Spacer(Modifier.height(12.dp))
-
-            Roadmap()
-
-            Spacer(Modifier.height(12.dp))
-
-            RequestFeature {
-                requestFeatureModalVisible = true
-            }
+//            Spacer(Modifier.height(12.dp))
+//
+//            Roadmap()
+//
+//            Spacer(Modifier.height(12.dp))
+//
+//            RequestFeature {
+//                requestFeatureModalVisible = true
+//            }
 
             Spacer(Modifier.height(12.dp))
 
             ContactSupport()
 
-            Spacer(Modifier.height(12.dp))
-
-            ProjectContributors()
+//            Spacer(Modifier.height(12.dp))
+//
+//            ProjectContributors()
 
             Spacer(Modifier.height(12.dp))
 
@@ -453,7 +453,7 @@ private fun HelpCenter() {
     val nav = navigation()
     SettingsDefaultButton(
         icon = R.drawable.ic_custom_education_m,
-        text = "Help Center",
+        text = "Money Management tips",
     ) {
         nav.navigateTo(
             IvyWebView(url = Constants.URL_HELP_CENTER)

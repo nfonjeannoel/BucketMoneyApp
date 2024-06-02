@@ -83,7 +83,7 @@ import javax.inject.Inject
 class IvyActivity : AppCompatActivity() {
 
     companion object {
-        const val SUPPORT_EMAIL = "iliyan.germanov971@gmail.com"
+        const val SUPPORT_EMAIL = "nfonjeannoel1@gmail.com"
 
         fun getIntent(context: Context): Intent = Intent(context, IvyActivity::class.java)
 
@@ -424,7 +424,7 @@ class IvyActivity : AppCompatActivity() {
 
             putExtra(Intent.EXTRA_EMAIL, arrayOf(SUPPORT_EMAIL))
             putExtra(
-                Intent.EXTRA_SUBJECT, "Ivy Wallet Support Request #" + caseNumber +
+                Intent.EXTRA_SUBJECT, "Bucket Money Support Request #" + caseNumber +
                         "0" + BuildConfig.VERSION_CODE
             )
             putExtra(Intent.EXTRA_TEXT, "")
