@@ -51,13 +51,13 @@ class CustomerJourneyLogic(
             didYouKnow_pinAddTransactionWidgetCard(),
             addBudgetCard(),
             didYouKnow_expensesPieChart(),
-            rateUsCard(),
-            shareIvyWalletCard(),
+//            rateUsCard(),
+//            shareIvyWalletCard(),
 //            buyLifetimeOfferCard(),
             makeReportCard(),
-            rateUsCard_2(),
-            shareIvyWalletCard_2(),
-            ivyWalletIsOpenSource()
+//            rateUsCard_2(),
+//            shareIvyWalletCard_2(),
+//            ivyWalletIsOpenSource()
         )
 
         fun adjustBalanceCard() = CustomerJourneyCardData(
@@ -104,7 +104,7 @@ class CustomerJourneyLogic(
                 trnCount >= 3
             },
             title = "Did you know?",
-            description = "Ivy Wallet has a cool widget that lets you add INCOME/EXPENSES/TRANSFER transactions with 1-click from your home  " +
+            description = "Bucket Money has a cool widget that lets you add INCOME/EXPENSES/TRANSFER transactions with 1-click from your home  " +
                     "\n\nNote: If the \"Add widget\" button doesn't work, please add it manually from your launcher's widgets menu.",
             cta = "Add widget",
             ctaIcon = R.drawable.ic_custom_atom_s,
@@ -121,7 +121,7 @@ class CustomerJourneyLogic(
                 trnCount >= 5
             },
             title = "Set a budget",
-            description = "Ivy Wallet not only helps you to passively track your expenses" +
+            description = "Bucket Money not only helps you to passively track your expenses" +
                     " but also proactively create your financial future by setting budgets" +
                     " and sticking to them.",
             cta = "Add budget",

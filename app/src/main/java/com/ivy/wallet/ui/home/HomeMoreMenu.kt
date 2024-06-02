@@ -218,9 +218,9 @@ private fun ColumnScope.Content(
         onBufferClick = onBufferClick
     )
 
-    Spacer(Modifier.height(16.dp))
+//    Spacer(Modifier.height(16.dp))
 
-    OpenSource()
+//    OpenSource()
 
     Spacer(Modifier.weight(1f))
 }
@@ -457,7 +457,7 @@ private fun QuickAccess(
 
         MoreMenuButton(
             icon = R.drawable.home_more_menu_share,
-            label = "Share Ivy"
+            label = "Share"
         ) {
             (context as IvyActivity).shareIvyWallet()
         }

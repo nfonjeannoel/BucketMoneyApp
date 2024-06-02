@@ -459,13 +459,14 @@ class IvyActivity : AppCompatActivity() {
         val share = Intent.createChooser(
             Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, Constants.URL_IVY_WALLET_GOOGLE_PLAY)
+                putExtra(Intent.EXTRA_TEXT, Constants.SHARE_TEXT)
                 type = "text/plain"
             },
             null
         )
         startActivity(share)
     }
+
 
     fun openGooglePlayAppPage(appId: String = packageName) {
         try {

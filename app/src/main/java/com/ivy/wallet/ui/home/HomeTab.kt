@@ -1,5 +1,6 @@
 package com.ivy.wallet.ui.home
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -37,8 +38,10 @@ import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.theme.modal.*
 import com.ivy.wallet.ui.theme.transaction.TransactionsDividerLine
 import com.ivy.wallet.ui.theme.transaction.transactions
+import timber.log.Timber
 
 private const val SWIPE_HORIZONTAL_THRESHOLD = 200
+private const val TAG = "HomeTabTag"
 
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
@@ -181,6 +184,8 @@ private fun BoxWithConstraintsScope.UI(
         ivyContext.setMoreMenuExpanded(expanded)
     }
     val hideBalanceRowState = remember { mutableStateOf(false) }
+
+    Timber.tag(TAG).d("UI: Selected period: $period")
 
 
     Column(

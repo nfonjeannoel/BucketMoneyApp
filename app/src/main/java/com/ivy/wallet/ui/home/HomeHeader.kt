@@ -1,5 +1,6 @@
 package com.ivy.wallet.ui.home
 
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -138,6 +140,17 @@ private fun HeaderStickyRow(
 
         Spacer(Modifier.weight(1f))
 
+        val context = LocalContext.current
+
+        // IMPLEMENT AI HERE
+        IvyOutlinedButton(
+            iconStart = R.drawable.baseline_lightbulb_24,
+            text = "AI",
+            iconTint = UI.colors.orange,
+        ) {
+            Toast.makeText(context, "AI analysis", Toast.LENGTH_SHORT).show()
+        }
+
         IvyOutlinedButton(
             modifier = Modifier.horizontalSwipeListener(
                 sensitivity = 75,
@@ -153,6 +166,8 @@ private fun HeaderStickyRow(
         ) {
             onShowMonthModal()
         }
+
+
 
         Spacer(Modifier.width(12.dp))
 

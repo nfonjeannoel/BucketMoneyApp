@@ -146,3 +146,19 @@ private fun Preview_FillMaxWidth() {
         }
     }
 }
+
+
+@Preview
+@Composable
+private fun Preview_Default() {
+    IvyWalletComponentPreview {
+        IvyOutlinedButton(
+            text = "Import backup file",
+            iconStart = R.drawable.ic_export_csv,
+            textColor = Green,
+            iconTint = Green
+        ) {
+
+        }
+    }
+}
