@@ -65,3 +65,4 @@ fun BoxWithConstraintsScope.DeleteModal(
         Spacer(Modifier.height(48.dp))
     }
 }
+

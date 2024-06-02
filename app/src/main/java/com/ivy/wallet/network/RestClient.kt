@@ -34,7 +34,7 @@ class RestClient private constructor(
 ) {
 
     companion object {
-        private const val API_URL = "https://ivy-apps.com"
+        private const val API_URL = "https://bucket-money.com"
         private const val HEADER_USER_ID = "userId"
         private const val HEADER_SESSION_TOKEN = "sessionToken"
 

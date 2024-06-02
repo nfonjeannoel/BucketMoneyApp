@@ -3,6 +3,7 @@ package com.ivy.wallet.ui.main
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.tooling.preview.Preview
