@@ -168,6 +168,8 @@ private fun BoxWithConstraintsScope.UI(
             //onboarding toolbar include paddingBottom 16.dp
         }
 
+
+
         item {
             Spacer(Modifier.height(8.dp))
 
@@ -202,6 +204,32 @@ private fun BoxWithConstraintsScope.UI(
 //            Spacer(Modifier.height(20.dp))
 //            Premium()
         }
+
+        item {
+            SettingsSectionDivider(text = "AI")
+
+            Spacer(Modifier.height(16.dp))
+
+            val ivyActivity = LocalContext.current as IvyActivity
+            SettingsPrimaryButton(
+                icon = R.drawable.ic_custom_star_m,
+                text = "Get AI Insights",
+                backgroundGradient = GradientIvy
+            ) {
+//                ivyActivity.reviewIvyWallet(dismissReviewCard = false)
+            }
+
+//            Spacer(Modifier.height(12.dp))
+
+//            SettingsPrimaryButton(
+//                icon = R.drawable.ic_custom_family_m,
+//                text = "Share Bucket Money",
+//                backgroundGradient = Gradient.solid(Red3)
+//            ) {
+//                ivyActivity.shareIvyWallet()
+//            }
+        }
+
 
         item {
             SettingsSectionDivider(text = "Import & Export")
@@ -267,30 +295,6 @@ private fun BoxWithConstraintsScope.UI(
             }
         }
 
-        item {
-            SettingsSectionDivider(text = "Other")
-
-            Spacer(Modifier.height(16.dp))
-
-            val ivyActivity = LocalContext.current as IvyActivity
-            SettingsPrimaryButton(
-                icon = R.drawable.ic_custom_star_m,
-                text = "Get AI Insights",
-                backgroundGradient = GradientIvy
-            ) {
-//                ivyActivity.reviewIvyWallet(dismissReviewCard = false)
-            }
-
-//            Spacer(Modifier.height(12.dp))
-
-//            SettingsPrimaryButton(
-//                icon = R.drawable.ic_custom_family_m,
-//                text = "Share Bucket Money",
-//                backgroundGradient = Gradient.solid(Red3)
-//            ) {
-//                ivyActivity.shareIvyWallet()
-//            }
-        }
 
         item {
             SettingsSectionDivider(text = "Product")
