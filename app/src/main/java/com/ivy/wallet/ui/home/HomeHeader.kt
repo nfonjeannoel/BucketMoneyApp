@@ -51,6 +51,7 @@ internal fun HomeHeader(
     bufferDiff: Double,
 
     onShowMonthModal: () -> Unit,
+    onShowAIModal: () -> Unit,
     onBalanceClick: () -> Unit,
 
     onSelectNextMonth: () -> Unit,
@@ -73,6 +74,7 @@ internal fun HomeHeader(
         balance = balance,
 
         onShowMonthModal = onShowMonthModal,
+        onShowAIModal = onShowAIModal,
         onBalanceClick = onBalanceClick,
 
         onSelectNextMonth = onSelectNextMonth,
@@ -99,6 +101,7 @@ private fun HeaderStickyRow(
     balance: Double,
 
     onShowMonthModal: () -> Unit,
+    onShowAIModal: () -> Unit,
     onBalanceClick: () -> Unit,
 
     onSelectNextMonth: () -> Unit,
@@ -143,14 +146,14 @@ private fun HeaderStickyRow(
         Spacer(Modifier.weight(1f))
 
         val context = LocalContext.current
-
+        Spacer(Modifier.width(8.dp))
         // IMPLEMENT AI HERE
         IvyOutlinedButton(
             iconStart = R.drawable.baseline_lightbulb_24,
             text = "AI",
             iconTint = UI.colors.orange,
         ) {
-            Toast.makeText(context, "AI analysis", Toast.LENGTH_SHORT).show()
+            onShowAIModal()
         }
         Spacer(Modifier.width(2.dp))
 
@@ -165,6 +168,8 @@ private fun HeaderStickyRow(
                 }
             ),
             iconStart = R.drawable.ic_calendar,
+//            text = period.displayMonthFromPeriod(period)
+//            TODO() Write a function to shorten display of all possible period.toDisplayShort response
             text = period.toDisplayShort(ivyWalletCtx().startDayOfMonth),
         ) {
             onShowMonthModal()

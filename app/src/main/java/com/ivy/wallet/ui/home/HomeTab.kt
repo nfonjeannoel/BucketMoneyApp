@@ -1,6 +1,7 @@
 package com.ivy.wallet.ui.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,8 @@ import com.ivy.wallet.ui.ivyWalletCtx
 import com.ivy.wallet.ui.main.MainTab
 import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.theme.modal.*
+import com.ivy.wallet.ui.theme.modal.model.AiInsightsModal
+import com.ivy.wallet.ui.theme.modal.model.AiInsightsModalData
 import com.ivy.wallet.ui.theme.transaction.TransactionsDividerLine
 import com.ivy.wallet.ui.theme.transaction.transactions
 import timber.log.Timber
@@ -120,6 +124,7 @@ fun BoxWithConstraintsScope.HomeTab(screen: Main) {
         onSetBuffer = viewModel::setBuffer,
         onSetCurrency = viewModel::setCurrency,
         onSetPeriod = viewModel::setPeriod,
+        onChatClicked = viewModel::chatClicked,
         onPayOrGet = viewModel::payOrGet,
         onDismissCustomerJourneyCard = viewModel::dismissCustomerJourneyCard,
         onSelectNextMonth = viewModel::nextMonth,
@@ -166,6 +171,7 @@ private fun BoxWithConstraintsScope.UI(
     onSetCurrency: (String) -> Unit = {},
     onSetBuffer: (Double) -> Unit = {},
     onSetPeriod: (TimePeriod) -> Unit = {},
+    onChatClicked: () -> Unit = {},
     onPayOrGet: (Transaction) -> Unit = {},
     onDismissCustomerJourneyCard: (CustomerJourneyCardData) -> Unit = {},
     onSelectNextMonth: () -> Unit = {},
@@ -178,6 +184,8 @@ private fun BoxWithConstraintsScope.UI(
     var choosePeriodModal: ChoosePeriodModalData? by remember {
         mutableStateOf(null)
     }
+
+    var aiInsightsModal: AiInsightsModalData? by remember { mutableStateOf(null) }
     var moreMenuExpanded by remember { mutableStateOf(ivyContext.moreMenuExpanded) }
     val setMoreMenuExpanded = { expanded: Boolean ->
         moreMenuExpanded = expanded
@@ -185,8 +193,9 @@ private fun BoxWithConstraintsScope.UI(
     }
     val hideBalanceRowState = remember { mutableStateOf(false) }
 
-    Timber.tag(TAG).d("UI: Selected period: $period")
+//    Timber.tag(TAG).d("UI: Selected period: $period")
 
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -225,6 +234,12 @@ private fun BoxWithConstraintsScope.UI(
 
             onShowMonthModal = {
                 choosePeriodModal = ChoosePeriodModalData(
+                    period = period
+                )
+            },
+            onShowAIModal = {
+//                Toast.makeText(context, "clicked", Toast.LENGTH_LONG).show()
+                aiInsightsModal = AiInsightsModalData(
                     period = period
                 )
             },
@@ -325,6 +340,16 @@ private fun BoxWithConstraintsScope.UI(
         }
     ) {
         onSetPeriod(it)
+    }
+
+    AiInsightsModal(
+        modal = aiInsightsModal,
+        dismiss = {
+            aiInsightsModal = null
+        }
+    ) {
+        Toast.makeText(context, "Continue chat clicked", Toast.LENGTH_LONG).show()
+        onChatClicked()
     }
 }
 

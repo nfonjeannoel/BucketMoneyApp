@@ -73,6 +73,41 @@ fun IvyOutlinedButton(
     }
 }
 
+
+@Composable
+fun IvyOutlinedIconButton(
+    modifier: Modifier = Modifier,
+    @DrawableRes buttonIcon: Int,
+    iconDescription: String = "Icon",
+    solidBackground: Boolean = false,
+    iconTint: Color = UI.colors.pureInverse,
+    borderColor: Color = UI.colors.medium,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .clip(UI.shapes.rFull)
+            .clickable(
+                onClick = onClick
+            )
+            .border(2.dp, borderColor, UI.shapes.rFull)
+            .thenIf(solidBackground) {
+                background(UI.colors.pure, UI.shapes.rFull)
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Spacer(Modifier.width(12.dp))
+
+        IvyIcon(
+            icon = buttonIcon,
+            tint = iconTint
+        )
+        Spacer(Modifier.width(12.dp))
+
+    }
+}
+
 @Composable
 fun IvyOutlinedButtonFillMaxWidth(
     modifier: Modifier = Modifier,

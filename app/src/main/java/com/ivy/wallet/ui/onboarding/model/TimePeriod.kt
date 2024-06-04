@@ -71,15 +71,18 @@ data class TimePeriod(
                     to = to
                 )
             }
+
             fromToRange != null -> {
                 fromToRange
             }
+
             lastNRange != null -> {
                 FromToTimeRange(
                     from = lastNRange.fromDate(),
                     to = timeNowUTC()
                 )
             }
+
             else -> {
                 val date = dateNowUTC()
                 FromToTimeRange(
@@ -124,15 +127,24 @@ data class TimePeriod(
                     "${range.from?.formatLocal(pattern)} - ${range.to?.formatLocal(pattern)}"
                 }
             }
+
             fromToRange != null -> {
                 fromToRange.toDisplay()
             }
+
             lastNRange != null -> {
                 "Last ${lastNRange.forDisplay()}"
             }
+
             else -> "Custom"
         }
     }
+
+    fun displayMonthFromPeriod(period: TimePeriod): String {
+        return if (period.month != null)
+            Month.fromMonthValue(period.month.monthValue).name else "<>"
+    }
+
 
     fun toDisplayLong(
         startDateOfMonth: Int
@@ -145,12 +157,15 @@ data class TimePeriod(
                     toRange(startDateOfMonth).toDisplay()
                 }
             }
+
             fromToRange != null -> {
                 fromToRange.toDisplay()
             }
+
             lastNRange != null -> {
                 "the last ${lastNRange.forDisplay()}"
             }
+
             else -> {
                 toRange(startDateOfMonth).toDisplay()
             }
@@ -167,5 +182,6 @@ data class TimePeriod(
             month.name
         }
     }
+
 
 }

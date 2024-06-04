@@ -296,6 +296,10 @@ class HomeViewModel @Inject constructor(
         load(period = period)
     }
 
+    fun chatClicked() {
+        // handle chat stuff
+    }
+
     fun payOrGet(transaction: Transaction) {
         viewModelScope.launch {
             TestIdlingResource.increment()

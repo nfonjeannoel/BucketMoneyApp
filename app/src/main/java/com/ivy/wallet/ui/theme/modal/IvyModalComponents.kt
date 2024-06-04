@@ -67,6 +67,7 @@ fun ModalSet(
     )
 }
 
+
 @Composable
 fun ModalCheck(
     modifier: Modifier = Modifier,
@@ -78,6 +79,22 @@ fun ModalCheck(
         modifier = modifier,
         text = label,
         iconStart = R.drawable.ic_check,
+        enabled = enabled,
+        onClick = onClick
+    )
+}
+
+@Composable
+fun ModalStartChat(
+    modifier: Modifier = Modifier,
+    label: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    ModalPositiveButton(
+        modifier = modifier,
+        text = label,
+        iconStart = R.drawable.baseline_chat_bubble_outline_24,
         enabled = enabled,
         onClick = onClick
     )
