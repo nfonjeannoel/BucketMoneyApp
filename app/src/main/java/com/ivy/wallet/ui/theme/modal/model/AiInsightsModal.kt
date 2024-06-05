@@ -29,7 +29,9 @@ import com.ivy.wallet.ui.theme.modal.IvyModal
 import com.ivy.wallet.ui.theme.modal.ModalStartChat
 import com.ivy.wallet.ui.theme.modal.model.Month.Companion.fromMonthValue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
@@ -48,13 +50,15 @@ data class ChatUiState(
 )
 
 object OpenAiPrompt {
-    val systemPrompt = "You are a helpful Money manager insights giver"
-
+    val systemPrompt =
+        "You are Bucket Money AI, a helpful money manager that provides personalized financial advice, insights, and overviews based on user transactions."
+    val userPrompt =
+        "Here is a list of my recent transactions. Based on this information, please provide an analysis of my spending habits, personalized financial advice, and any tips for better money management. Here are the Transactions -> "
 }
 
 val TAG = "aiinsightmodel"
 val TEMPERATURE = 0.2
-val MAX_TOKENS = 300
+val MAX_TOKENS = 600
 val FREQUENCY_PENALTY = 0.5
 val PRESENCE_PENALTY = 0.5
 
@@ -66,21 +70,10 @@ fun BoxWithConstraintsScope.AiInsightsModal(
     onChatClicked: () -> Unit
 ) {
 
-    var transactionString = ""
-    var hasTransactions = false
-    modal?.history?.forEachIndexed { index, transactionHistoryItem ->
-        if (transactionHistoryItem is Transaction) {
-            hasTransactions = true
-            transactionString += "$index.${transactionHistoryItem.toChatGptPrompt()}"
-        }
-    }
-
-    Timber.tag(TAG).d("transactionsString $transactionString")
-
-    val chatUiState = remember {
+    var chatUiState by remember {
         mutableStateOf(
             ChatUiState(
-                transactionsString = transactionString,
+                transactionsString = "",
                 aiInsights = null,
                 loading = true,
                 error = null
@@ -88,67 +81,89 @@ fun BoxWithConstraintsScope.AiInsightsModal(
         )
     }
 
+//    var transactionString = ""
+    var hasTransactions = false
+    modal?.history?.forEachIndexed { index, transactionHistoryItem ->
+        if (transactionHistoryItem is Transaction) {
+            hasTransactions = true
+            chatUiState = chatUiState.copy(
+                transactionsString =chatUiState.transactionsString + "$index.${transactionHistoryItem.toChatGptPrompt()}"
+            )
+        }
+    }
+
+    Timber.tag(TAG).d("transactionsString ${chatUiState.transactionsString}")
+
+
+
 
 
     if (hasTransactions) {
-        LaunchedEffect(true) {
+        val coroutineScope = rememberCoroutineScope()
 
-            val openAI = OpenAI(Constants.OPEN_AI_API_KEY)
+        LaunchedEffect(key1 = true) {
+            coroutineScope.launch {
 
-            val chatCompletionRequest = ChatCompletionRequest(
-                model = ModelId("gpt-3.5-turbo"),
-                messages = listOf(
-                    ChatMessage(
-                        role = ChatRole.System,
-                        content = OpenAiPrompt.systemPrompt
+                val openAI = OpenAI(Constants.OPEN_AI_API_KEY)
+
+                val chatMessage = ChatMessage(
+                    role = ChatRole.User,
+                    content = OpenAiPrompt.userPrompt + chatUiState.transactionsString
+                )
+                Timber.tag(TAG).d("chatMessage ${chatMessage.content}")
+                val chatCompletionRequest = ChatCompletionRequest(
+                    model = ModelId("gpt-3.5-turbo"),
+                    messages = listOf(
+                        ChatMessage(
+                            role = ChatRole.System,
+                            content = OpenAiPrompt.systemPrompt
+                        ),
+                        chatMessage
+
                     ),
-                    ChatMessage(
-                        role = ChatRole.User,
-                        content = chatUiState.value.transactionsString
-                    )
-                ),
-                temperature = TEMPERATURE,
-                maxTokens = MAX_TOKENS,
-                topP = 1.0,
-                frequencyPenalty = FREQUENCY_PENALTY,
-                presencePenalty = PRESENCE_PENALTY,
-            )
+                    temperature = TEMPERATURE,
+                    maxTokens = MAX_TOKENS,
+                    topP = 1.0,
+                    frequencyPenalty = FREQUENCY_PENALTY,
+                    presencePenalty = PRESENCE_PENALTY,
+                )
 
-            try {
-                val completions: Flow<ChatCompletionChunk> =
-                    openAI.chatCompletions(chatCompletionRequest)
-                completions.collect { completionChunk ->
-                    val response = completionChunk.choices[0].delta.content
-                    response?.let {
-                        withContext(Dispatchers.Main) {
-                            chatUiState.value = chatUiState.value.copy(
-                                aiInsights = chatUiState.value.aiInsights + it,
-                                loading = chatUiState.value.loading,
-                                transactionsString = chatUiState.value.transactionsString,
-                                error = chatUiState.value.error
-                            )
+                try {
+                    val completions: Flow<ChatCompletionChunk> =
+                        openAI.chatCompletions(chatCompletionRequest)
+                    completions.collect { completionChunk ->
+                        val response = completionChunk.choices[0].delta.content
+                        response?.let {
+                            withContext(Dispatchers.Main) {
+                                chatUiState = chatUiState.copy(
+                                    aiInsights = (chatUiState.aiInsights ?: "") + it,
+                                    loading = false,
+                                    transactionsString = chatUiState.transactionsString,
+                                    error = chatUiState.error
+                                )
+                            }
+
+                            Timber.tag(TAG).d("response $it")
                         }
-
-                        Timber.tag(TAG).d("response $it")
                     }
-                }
-                withContext(Dispatchers.Main) {
-                    chatUiState.value = chatUiState.value.copy(loading = false, error = null)
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    chatUiState.value = chatUiState.value.copy(error = e.message, loading = false)
-                }
+                    withContext(Dispatchers.Main) {
+                        chatUiState = chatUiState.copy(loading = false, error = null)
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        chatUiState = chatUiState.copy(error = e.message, loading = false)
+                    }
 
+                }
             }
         }
 
     } else {
-        chatUiState.value = chatUiState.value.copy(
-            loading = false,
+        chatUiState = chatUiState.copy(
+            loading = true,
             error = null,
-            transactionsString = chatUiState.value.transactionsString,
-            aiInsights = "Please record more transactions to get meaningful insights"
+            transactionsString = chatUiState.transactionsString,
+            aiInsights = null
         )
     }
 
@@ -199,7 +214,7 @@ fun BoxWithConstraintsScope.AiInsightsModal(
 @Composable
 private fun DisplayAiInsights(
     period: TimePeriod?,
-    chatUiState: MutableState<ChatUiState>
+    chatUiState: ChatUiState
 ) {
     val ivyContext = ivyWalletCtx()
     Text(
@@ -219,18 +234,18 @@ private fun DisplayAiInsights(
     Column(
         modifier = Modifier.padding(start = 32.dp, end = 32.dp)
     ) {
-        if (chatUiState.value.loading) {
+        if (chatUiState.loading) {
             // Display a loading indicator
             CircularProgressIndicator()
-        } else if (chatUiState.value.error != null) {
+        } else if (chatUiState.error != null) {
             // Display the error message
-            Text(text = chatUiState.value.error!!)
-        } else if (chatUiState.value.transactionsString.isNullOrEmpty()) {
+            Text(text = chatUiState.error!!)
+        } else if (chatUiState.aiInsights != null) {
+            // Display the AI insights
+            Text(text = chatUiState.aiInsights!!)
+        } else if (chatUiState.transactionsString.isNullOrEmpty()) {
             // Display a message when there are no transactions
             Text(text = "No transactions available.")
-        } else if (chatUiState.value.aiInsights != null) {
-            // Display the AI insights
-            Text(text = chatUiState.value.aiInsights!!)
         }
     }
 

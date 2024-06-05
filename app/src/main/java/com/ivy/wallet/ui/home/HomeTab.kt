@@ -238,7 +238,6 @@ private fun BoxWithConstraintsScope.UI(
                 )
             },
             onShowAIModal = {
-//                Toast.makeText(context, "clicked", Toast.LENGTH_LONG).show()
                 aiInsightsModal = AiInsightsModalData(
                     period = period,
                     history = history
@@ -349,7 +348,6 @@ private fun BoxWithConstraintsScope.UI(
             aiInsightsModal = null
         }
     ) {
-        Toast.makeText(context, "Continue chat clicked", Toast.LENGTH_LONG).show()
         onChatClicked()
     }
 }
