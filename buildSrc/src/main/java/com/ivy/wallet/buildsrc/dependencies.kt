@@ -17,6 +17,7 @@
 package com.ivy.wallet.buildsrc
 
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 import org.gradle.kotlin.dsl.project
 
 
@@ -26,17 +27,17 @@ object Project {
     const val versionCode = 101
 
     //Compile SDK & Build Tools
-    const val compileSdkVersion = 31
+    const val compileSdkVersion = 34
 
     //App
     const val applicationId = "com.ivy.wallet"
     const val minSdk = 28
-    const val targetSdk = 30
+    const val targetSdk = 34
 }
 
 object GlobalVersions {
-    const val compose = "1.1.1"
-    const val kotlinVersion = "1.6.10"
+    const val compose = "1.5.0"
+    const val kotlinVersion = "1.9.0"
 }
 
 /**
@@ -61,7 +62,7 @@ fun DependencyHandler.appModuleDependencies(
     Firebase()
 
     Hilt(
-        hiltVersion = "2.38.1",
+        hiltVersion = "2.48",
         versionX = "1.0.0"
     )
     RoomDB(version = "2.4.0-alpha03")
@@ -288,6 +289,18 @@ fun DependencyHandler.ThirdParty() {
 
     implementation("com.opencsv:opencsv:5.5")
     implementation("org.apache.commons:commons-lang3:3.12.0")
+
+//    implementation("com.aallam.openai:openai-client:3.7.2")
+//    implementation("io.ktor:ktor-client-okhttp:1.3.0")
+
+    // import Kotlin API client BOM
+    implementation(platform("com.aallam.openai:openai-client-bom:3.7.2"))
+
+    // define dependencies without versions
+    implementation("com.aallam.openai:openai-client")
+    implementation("io.ktor:ktor-client-okhttp")
+
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
 }
 
 fun DependencyHandler.FunctionalProgramming(

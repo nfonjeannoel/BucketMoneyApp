@@ -240,7 +240,8 @@ private fun BoxWithConstraintsScope.UI(
             onShowAIModal = {
 //                Toast.makeText(context, "clicked", Toast.LENGTH_LONG).show()
                 aiInsightsModal = AiInsightsModalData(
-                    period = period
+                    period = period,
+                    history = history
                 )
             },
             onBalanceClick = {

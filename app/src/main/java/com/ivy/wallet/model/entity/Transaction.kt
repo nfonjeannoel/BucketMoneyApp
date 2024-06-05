@@ -58,4 +58,7 @@ data class Transaction(
             isDeleted = false
         )
     }
+
+
+    fun toChatGptPrompt() = "Type:${type.name},amount:${amount},title:${title ?: ""},description:${description ?: ""},date:${dateTime?.toLocalDate() ?: ""},category:${categoryId ?: ""},dueDate:${dueDate?.toLocalDate() ?: ""}"
 }

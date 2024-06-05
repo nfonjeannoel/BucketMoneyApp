@@ -138,7 +138,7 @@ class IvyActivity : AppCompatActivity() {
 
             LaunchedEffect(isSystemInDarkTheme) {
                 viewModel.start(isSystemInDarkTheme, intent)
-                viewModel.initBilling(this@IvyActivity)
+//                viewModel.initBilling(this@IvyActivity)
             }
 
             IvyUI(

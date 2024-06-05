@@ -38,6 +38,7 @@
         tools:ignore="LockedOrientationActivity">
 
         <activity
+            android:exported="true"
             android:name=".ui.IvyActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
@@ -53,7 +54,9 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
 
-        <receiver android:name=".widget.AddTransactionWidget">
+        <receiver
+            android:exported="false"
+            android:name=".widget.AddTransactionWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -62,7 +65,9 @@
                 android:resource="@xml/add_transaction_widget_info" />
         </receiver>
 
-        <receiver android:name=".widget.AddTransactionWidgetCompact">
+        <receiver
+            android:exported="false"
+            android:name=".widget.AddTransactionWidgetCompact">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

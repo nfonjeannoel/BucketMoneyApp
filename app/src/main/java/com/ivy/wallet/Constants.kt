@@ -14,6 +14,8 @@ object Constants {
     const val URL_PRIVACY_POLICY =
         "https://github.com/nfonjeannoel"
 
+    const val OPEN_AI_API_KEY = "sk-proj-oViR6fEilLnxirNaJHOdT3BlbkFJzwkNiXb7N43tCsSsgsFA"
+
     const val SHARE_TEXT = "Check out an AI enhanced person finance app that helps you manage your money better. It's called Bucket Money"
 
     const val URL_IVY_WALLET_REPO = "https://github.com/nfonjeannoel"

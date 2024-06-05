@@ -132,6 +132,7 @@ class IvyViewModel @Inject constructor(
     }
 
     fun initBilling(activity: AppCompatActivity) {
+        return
         ivyBilling.init(
             activity = activity,
             onReady = {

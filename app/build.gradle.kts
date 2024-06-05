@@ -80,6 +80,10 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+//        freeCompilerArgs += listOf(
+//            "-P",
+//            "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+//        )
     }
 
     buildFeatures {
@@ -87,7 +91,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = com.ivy.wallet.buildsrc.GlobalVersions.compose
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 
     lint {

@@ -768,6 +768,7 @@ private fun AccountCardUser(
                 onSync()
             }
         }
+        else -> {}
     }
 
     Spacer(Modifier.height(24.dp))

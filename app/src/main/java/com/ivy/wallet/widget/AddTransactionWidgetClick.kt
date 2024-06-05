@@ -27,6 +27,7 @@ class AddTransactionWidgetClick {
                         type = TransactionType.INCOME
                     ).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        setPackage(context.packageName)
                     }
                 )
             }
@@ -37,6 +38,7 @@ class AddTransactionWidgetClick {
                         type = TransactionType.EXPENSE
                     ).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        setPackage(context.packageName)
                     }
                 )
             }
@@ -47,6 +49,7 @@ class AddTransactionWidgetClick {
                         type = TransactionType.TRANSFER
                     ).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        setPackage(context.packageName)
                     }
                 )
             }
@@ -78,7 +81,7 @@ class AddTransactionWidgetClick {
                 context,
                 0,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         }
     } //----------------------------- </SETUP> -------------------------------------------------------

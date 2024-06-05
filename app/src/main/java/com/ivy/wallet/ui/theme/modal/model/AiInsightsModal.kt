@@ -1,52 +1,63 @@
 package com.ivy.wallet.ui.theme.modal.model
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.aallam.openai.api.chat.ChatCompletionChunk
+import com.aallam.openai.api.chat.ChatCompletionRequest
+import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.chat.ChatRole
+import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.OpenAI
 import com.ivy.design.l0_system.UI
 import com.ivy.design.l0_system.style
-import com.ivy.wallet.R
+import com.ivy.wallet.Constants
 import com.ivy.wallet.base.*
-import com.ivy.wallet.model.IntervalType
+import com.ivy.wallet.model.TransactionHistoryItem
+import com.ivy.wallet.model.entity.Transaction
 import com.ivy.wallet.ui.IvyWalletPreview
 import com.ivy.wallet.ui.ivyWalletCtx
-import com.ivy.wallet.ui.onboarding.model.FromToTimeRange
-import com.ivy.wallet.ui.onboarding.model.LastNTimeRange
 import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.theme.*
-import com.ivy.wallet.ui.theme.components.CircleButtonFilled
-import com.ivy.wallet.ui.theme.components.IntervalPickerRow
-import com.ivy.wallet.ui.theme.components.IvyDividerLine
-import com.ivy.wallet.ui.theme.modal.ChoosePeriodModal
-import com.ivy.wallet.ui.theme.modal.ChoosePeriodModalData
 import com.ivy.wallet.ui.theme.modal.IvyModal
-import com.ivy.wallet.ui.theme.modal.ModalSet
 import com.ivy.wallet.ui.theme.modal.ModalStartChat
-import com.ivy.wallet.ui.theme.modal.model.Month
 import com.ivy.wallet.ui.theme.modal.model.Month.Companion.fromMonthValue
-import com.ivy.wallet.ui.theme.modal.model.Month.Companion.monthsList
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.LocalDateTime
 import java.util.*
 
 data class AiInsightsModalData(
     val id: UUID = UUID.randomUUID(),
-    val period: TimePeriod
+    val period: TimePeriod,
+    val history: List<TransactionHistoryItem>
 )
+
+data class ChatUiState(
+    val transactionsString: String? = null,
+    val aiInsights: String? = null,
+    val loading: Boolean = false,
+    val error: String? = null
+)
+
+object OpenAiPrompt {
+    val systemPrompt = "You are a helpful Money manager insights giver"
+
+}
+
+val TAG = "aiinsightmodel"
+val TEMPERATURE = 0.2
+val MAX_TOKENS = 300
+val FREQUENCY_PENALTY = 0.5
+val PRESENCE_PENALTY = 0.5
+
 
 @Composable
 fun BoxWithConstraintsScope.AiInsightsModal(
@@ -54,9 +65,93 @@ fun BoxWithConstraintsScope.AiInsightsModal(
     dismiss: () -> Unit,
     onChatClicked: () -> Unit
 ) {
-    val period by remember(modal) {
-        mutableStateOf(modal?.period)
+
+    var transactionString = ""
+    var hasTransactions = false
+    modal?.history?.forEachIndexed { index, transactionHistoryItem ->
+        if (transactionHistoryItem is Transaction) {
+            hasTransactions = true
+            transactionString += "$index.${transactionHistoryItem.toChatGptPrompt()}"
+        }
     }
+
+    Timber.tag(TAG).d("transactionsString $transactionString")
+
+    val chatUiState = remember {
+        mutableStateOf(
+            ChatUiState(
+                transactionsString = transactionString,
+                aiInsights = null,
+                loading = true,
+                error = null
+            )
+        )
+    }
+
+
+
+    if (hasTransactions) {
+        LaunchedEffect(true) {
+
+            val openAI = OpenAI(Constants.OPEN_AI_API_KEY)
+
+            val chatCompletionRequest = ChatCompletionRequest(
+                model = ModelId("gpt-3.5-turbo"),
+                messages = listOf(
+                    ChatMessage(
+                        role = ChatRole.System,
+                        content = OpenAiPrompt.systemPrompt
+                    ),
+                    ChatMessage(
+                        role = ChatRole.User,
+                        content = chatUiState.value.transactionsString
+                    )
+                ),
+                temperature = TEMPERATURE,
+                maxTokens = MAX_TOKENS,
+                topP = 1.0,
+                frequencyPenalty = FREQUENCY_PENALTY,
+                presencePenalty = PRESENCE_PENALTY,
+            )
+
+            try {
+                val completions: Flow<ChatCompletionChunk> =
+                    openAI.chatCompletions(chatCompletionRequest)
+                completions.collect { completionChunk ->
+                    val response = completionChunk.choices[0].delta.content
+                    response?.let {
+                        withContext(Dispatchers.Main) {
+                            chatUiState.value = chatUiState.value.copy(
+                                aiInsights = chatUiState.value.aiInsights + it,
+                                loading = chatUiState.value.loading,
+                                transactionsString = chatUiState.value.transactionsString,
+                                error = chatUiState.value.error
+                            )
+                        }
+
+                        Timber.tag(TAG).d("response $it")
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    chatUiState.value = chatUiState.value.copy(loading = false, error = null)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    chatUiState.value = chatUiState.value.copy(error = e.message, loading = false)
+                }
+
+            }
+        }
+
+    } else {
+        chatUiState.value = chatUiState.value.copy(
+            loading = false,
+            error = null,
+            transactionsString = chatUiState.value.transactionsString,
+            aiInsights = "Please record more transactions to get meaningful insights"
+        )
+    }
+
 
     val ivyContext = ivyWalletCtx()
     val modalScrollState = rememberScrollState()
@@ -83,7 +178,8 @@ fun BoxWithConstraintsScope.AiInsightsModal(
 //        Timber.tag("aiinsightmodel").d( "period ${period?.year}")
 
         DisplayAiInsights(
-            period = period
+            period = modal?.period,
+            chatUiState = chatUiState
         )
 //        Spacer(Modifier.height(32.dp))
 //
@@ -103,12 +199,14 @@ fun BoxWithConstraintsScope.AiInsightsModal(
 @Composable
 private fun DisplayAiInsights(
     period: TimePeriod?,
+    chatUiState: MutableState<ChatUiState>
 ) {
     val ivyContext = ivyWalletCtx()
     Text(
         modifier = Modifier
             .padding(start = 32.dp),
-        text = "Ai analysis: ${period?.toDisplayLong(ivyContext.startDayOfMonth)}" ?: "Selected Period",
+        text = "Ai analysis: ${period?.toDisplayLong(ivyContext.startDayOfMonth)}"
+            ?: "Selected Period",
         style = UI.typo.b1.style(
             color = if (period != null) UI.colors.pureInverse else Gray,
             fontWeight = FontWeight.ExtraBold
@@ -118,11 +216,31 @@ private fun DisplayAiInsights(
     Spacer(Modifier.height(24.dp))
 
 
-    val state = rememberLazyListState()
-
-    val coroutineScope = rememberCoroutineScope()
-    onScreenStart {
+    Column(
+        modifier = Modifier.padding(start = 32.dp, end = 32.dp)
+    ) {
+        if (chatUiState.value.loading) {
+            // Display a loading indicator
+            CircularProgressIndicator()
+        } else if (chatUiState.value.error != null) {
+            // Display the error message
+            Text(text = chatUiState.value.error!!)
+        } else if (chatUiState.value.transactionsString.isNullOrEmpty()) {
+            // Display a message when there are no transactions
+            Text(text = "No transactions available.")
+        } else if (chatUiState.value.aiInsights != null) {
+            // Display the AI insights
+            Text(text = chatUiState.value.aiInsights!!)
+        }
     }
+
+
+//
+//    val state = rememberLazyListState()
+//
+//    val coroutineScope = rememberCoroutineScope()
+//    onScreenStart {
+//    }
 
 
 }
@@ -152,8 +270,9 @@ private fun Preview_MonthSelected() {
         AiInsightsModal(
             modal = AiInsightsModalData(
                 period = TimePeriod(
-                    month = fromMonthValue(3)
-                )
+                    month = fromMonthValue(3),
+                ),
+                history = emptyList()
             ),
             dismiss = {},
             onChatClicked = {}
