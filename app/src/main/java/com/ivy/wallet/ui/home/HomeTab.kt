@@ -80,6 +80,7 @@ fun BoxWithConstraintsScope.HomeTab(screen: Main) {
     val overdue by viewModel.overdue.collectAsState()
 
     val history by viewModel.history.collectAsState()
+    val chatUiState by viewModel.chatUiState.collectAsState()
 
     //Customer Journey
     val customerJourneyCards by viewModel.customerJourneyCards.collectAsState()
@@ -116,6 +117,7 @@ fun BoxWithConstraintsScope.HomeTab(screen: Main) {
         overdue = overdue,
 
         history = history,
+        chatUiState = chatUiState,
 
         customerJourneyCards = customerJourneyCards,
 
@@ -128,7 +130,8 @@ fun BoxWithConstraintsScope.HomeTab(screen: Main) {
         onPayOrGet = viewModel::payOrGet,
         onDismissCustomerJourneyCard = viewModel::dismissCustomerJourneyCard,
         onSelectNextMonth = viewModel::nextMonth,
-        onSelectPreviousMonth = viewModel::previousMonth
+        onSelectPreviousMonth = viewModel::previousMonth,
+        getCompletion = viewModel::getCompletion
     )
 }
 
@@ -163,6 +166,7 @@ private fun BoxWithConstraintsScope.UI(
     overdue: List<Transaction>,
 
     history: List<TransactionHistoryItem>,
+    chatUiState: ChatUiState,
 
     customerJourneyCards: List<CustomerJourneyCardData> = emptyList(),
 
@@ -176,6 +180,7 @@ private fun BoxWithConstraintsScope.UI(
     onDismissCustomerJourneyCard: (CustomerJourneyCardData) -> Unit = {},
     onSelectNextMonth: () -> Unit = {},
     onSelectPreviousMonth: () -> Unit = {},
+    getCompletion: () -> Unit = {}
 ) {
     val ivyContext = ivyWalletCtx()
 
@@ -193,9 +198,10 @@ private fun BoxWithConstraintsScope.UI(
     }
     val hideBalanceRowState = remember { mutableStateOf(false) }
 
-//    Timber.tag(TAG).d("UI: Selected period: $period")
 
-    val context = LocalContext.current
+//    val context = LocalContext.current
+
+//    Timber.tag(TAG).d("Recomposing UI: ${chatUiState.aiInsights}")
 
     Column(
         modifier = Modifier
@@ -240,8 +246,8 @@ private fun BoxWithConstraintsScope.UI(
             onShowAIModal = {
                 aiInsightsModal = AiInsightsModalData(
                     period = period,
-                    history = history
                 )
+                getCompletion()
             },
             onBalanceClick = {
                 onBalanceClick()
@@ -344,6 +350,7 @@ private fun BoxWithConstraintsScope.UI(
 
     AiInsightsModal(
         modal = aiInsightsModal,
+        chatUiState = chatUiState,
         dismiss = {
             aiInsightsModal = null
         }
@@ -522,6 +529,7 @@ private fun PreviewHomeTab() {
             overdue = emptyList(),
 
             history = emptyList(),
+            chatUiState = ChatUiState(),
         )
     }
 }

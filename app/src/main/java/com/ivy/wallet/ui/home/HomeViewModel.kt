@@ -2,8 +2,15 @@ package com.ivy.wallet.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aallam.openai.api.chat.ChatCompletionChunk
+import com.aallam.openai.api.chat.ChatCompletionRequest
+import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.chat.ChatRole
+import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.OpenAI
 import com.ivy.design.l0_system.Theme
 import com.ivy.design.navigation.Navigation
+import com.ivy.wallet.Constants
 import com.ivy.wallet.base.TestIdlingResource
 import com.ivy.wallet.base.dateNowUTC
 import com.ivy.wallet.base.ioThread
@@ -31,10 +38,36 @@ import com.ivy.wallet.ui.Main
 import com.ivy.wallet.ui.main.MainTab
 import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.onboarding.model.toCloseTimeRange
+import com.ivy.wallet.ui.theme.modal.model.OpenAiPrompt
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.UUID
 import javax.inject.Inject
+
+data class ChatUiState(
+    val transactionsString: String? = null,
+    val aiInsights: String? = null,
+    val loading: Boolean = false,
+    val error: String? = null
+)
+
+data class ChatMessageEntity(
+    val id: UUID = UUID.randomUUID(),
+    var content: String,
+    val type: ChatMessageType,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+
+enum class ChatMessageType {
+    SENT, RECEIVED
+}
+
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -49,6 +82,15 @@ class HomeViewModel @Inject constructor(
     private val customerJourneyLogic: CustomerJourneyLogic,
     private val sharedPrefs: SharedPrefs
 ) : ViewModel() {
+    val TAG = "HomeViewModel"
+    val TEMPERATURE = 0.2
+    val MAX_TOKENS = 600
+    val FREQUENCY_PENALTY = 0.5
+    val PRESENCE_PENALTY = 0.5
+
+
+    private val _chatUiState = MutableStateFlow(ChatUiState())
+    val chatUiState: StateFlow<ChatUiState> = _chatUiState.asStateFlow()
 
     private val _theme = MutableStateFlow(Theme.LIGHT)
     val theme = _theme.readOnly()
@@ -198,6 +240,101 @@ class HomeViewModel @Inject constructor(
 
             TestIdlingResource.decrement()
         }
+    }
+
+    fun getCompletion() {
+        viewModelScope.launch {
+            _chatUiState.value = _chatUiState.value.copy(
+                loading = true,
+                error = "",
+                transactionsString = "",
+                aiInsights = "",
+            )
+            Timber.tag(TAG).d("getCompletion: ${_chatUiState.value.transactionsString}")
+            val previousMessages: MutableList<ChatMessageEntity> = mutableListOf()
+
+            _history.value.forEachIndexed { index, transactionHistoryItem ->
+                if (transactionHistoryItem is Transaction) {
+//                    Timber.tag(TAG).d("found transaction ${transactionHistoryItem.amount}")
+//                    previousMessages.plus("$index.${transactionHistoryItem.toChatGptPrompt()}")
+//                    previousMessages.add("$index.${transactionHistoryItem.toChatGptPrompt()}")
+                    val transactionString = "$index.${transactionHistoryItem.toChatGptPrompt()}"
+                    _chatUiState.value = _chatUiState.value.copy(
+                        transactionsString = _chatUiState.value.transactionsString + transactionString
+                    )
+                    previousMessages.add(
+                        ChatMessageEntity(
+                            content = transactionString,
+                            type = ChatMessageType.SENT
+                        )
+                    )
+                }
+            }
+
+            val chatMessageContext: MutableList<ChatMessage> = mutableListOf()
+
+            var totalCharCount = 0
+
+            previousMessages.forEach { chatMessageEntity ->
+                totalCharCount += chatMessageEntity.content.length
+                if (totalCharCount > 3000) {
+                    return@forEach
+                }
+                chatMessageContext.add(
+                    ChatMessage(
+                        role = ChatRole.User,
+                        content = chatMessageEntity.content
+                    )
+                )
+            }
+
+//            Timber.tag(TAG).d(chatMessageContext.toString())
+
+            val openAI = OpenAI(Constants.OPEN_AI_API_KEY)
+
+            val extraPromptDetails = "Currency is ${baseCurrencyCode.value}."
+
+            val chatCompletionRequest = ChatCompletionRequest(
+                model = ModelId("gpt-3.5-turbo"),
+                messages = listOf(
+                    ChatMessage(
+                        role = ChatRole.System,
+                        content = OpenAiPrompt.systemPrompt
+                    ),
+                    *chatMessageContext.toTypedArray(),
+                    ChatMessage(
+                        role = ChatRole.User,
+                        content = OpenAiPrompt.userPrompt + extraPromptDetails
+                    )
+                ),
+                temperature = TEMPERATURE,
+                maxTokens = MAX_TOKENS,
+                topP = 1.0,
+                frequencyPenalty = FREQUENCY_PENALTY,
+                presencePenalty = PRESENCE_PENALTY,
+            )
+
+
+            try {
+                val completions: Flow<ChatCompletionChunk> =
+                    openAI.chatCompletions(chatCompletionRequest)
+                completions.collect { completionChunk ->
+                    val response = completionChunk.choices[0].delta.content
+//                    Timber.tag(TAG).d("response: $response")
+                    response?.let {
+                        _chatUiState.value = _chatUiState.value.copy(
+                            aiInsights = _chatUiState.value.aiInsights + it,
+                        )
+                    }
+                }
+//                Timber.tag(TAG).d("Done with completion")
+                _chatUiState.value = _chatUiState.value.copy(loading = false, error = "")
+            } catch (e: Exception) {
+                _chatUiState.value = _chatUiState.value.copy(error = e.message, loading = false)
+            }
+
+        }
+
     }
 
     private fun loadNewTheme() {
