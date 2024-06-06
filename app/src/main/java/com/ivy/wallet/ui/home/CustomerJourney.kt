@@ -24,7 +24,7 @@ import com.ivy.wallet.ui.IvyActivity
 import com.ivy.wallet.ui.IvyWalletComponentPreview
 import com.ivy.wallet.ui.ivyWalletCtx
 import com.ivy.wallet.ui.theme.Gradient
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.IvyIcon
 import com.ivy.wallet.ui.theme.dynamicContrast
 import com.ivy.wallet.ui.theme.findContrastTextColor
@@ -121,7 +121,7 @@ fun CustomerJourneyCard(
 
         Spacer(Modifier.height(32.dp))
 
-        IvyButton(
+        BmButton(
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(end = 20.dp)

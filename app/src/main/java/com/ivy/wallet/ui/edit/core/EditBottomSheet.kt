@@ -341,7 +341,7 @@ private fun TransferRowMini(
 
         val fromColor = fromAccount?.color?.toComposeColor() ?: Ivy
         val fromContrastColor = findContrastTextColor(fromColor)
-        IvyButton(
+        BmButton(
             text = fromAccount?.name ?: "Null",
             iconStart = R.drawable.ic_accounts,
             backgroundGradient = Gradient.solid(fromColor),
@@ -362,7 +362,7 @@ private fun TransferRowMini(
 
         val toColor = toAccount?.color?.toComposeColor() ?: Ivy
         val toContrastColor = findContrastTextColor(toColor)
-        IvyButton(
+        BmButton(
             text = toAccount?.name ?: "Null",
             iconStart = R.drawable.ic_accounts,
             backgroundGradient = Gradient.solid(toColor),

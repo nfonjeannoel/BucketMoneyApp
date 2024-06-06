@@ -28,7 +28,7 @@ import com.ivy.wallet.base.keyboardVisibleState
 import com.ivy.wallet.base.selectEndTextFieldValue
 import com.ivy.wallet.model.TransactionType
 import com.ivy.wallet.ui.IvyWalletComponentPreview
-import com.ivy.wallet.ui.theme.components.IvyTitleTextField
+import com.ivy.wallet.ui.theme.components.BmTitleTextField
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -48,7 +48,7 @@ fun ColumnScope.Title(
     onTitleChanged: (String?) -> Unit,
     onNext: () -> Unit,
 ) {
-    IvyTitleTextField(
+    BmTitleTextField(
         modifier = Modifier
             .padding(horizontal = 32.dp)
             .focusRequester(titleFocus),

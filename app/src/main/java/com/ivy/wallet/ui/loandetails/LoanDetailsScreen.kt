@@ -411,7 +411,7 @@ private fun LoanInfoCard(
                 )
             )
             if (selectedLoanAccount != null)
-                IvyButton(
+                BmButton(
                     modifier = Modifier.padding(end = 16.dp, top = 12.dp),
                     backgroundGradient = Gradient.solid(loan.color.toComposeColor()),
                     hasGlow = false,
@@ -567,7 +567,7 @@ private fun LoanInfoCard(
 
         Spacer(Modifier.height(24.dp))
 
-        IvyButton(
+        BmButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -636,7 +636,7 @@ private fun LoanRecordItem(
         if (account != null || loanRecord.interest) {
             Row(Modifier.padding(16.dp)) {
                 if (account != null) {
-                    IvyButton(
+                    BmButton(
                         backgroundGradient = Gradient.solid(UI.colors.pure),
                         hasGlow = false,
                         iconTint = UI.colors.pureInverse,
@@ -666,7 +666,7 @@ private fun LoanRecordItem(
 
                     val textIconColor = if (isDarkColor(loan.color)) MediumWhite else MediumBlack
 
-                    IvyButton(
+                    BmButton(
                         modifier = Modifier.padding(start = 8.dp),
                         backgroundGradient = Gradient.solid(loan.color.toComposeColor()),
                         hasGlow = false,

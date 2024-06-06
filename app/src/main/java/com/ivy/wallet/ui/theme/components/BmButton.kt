@@ -30,7 +30,7 @@ import com.ivy.wallet.ui.theme.Ivy
 import com.ivy.wallet.ui.theme.White
 
 @Composable
-fun IvyButton(
+fun BmButton(
     modifier: Modifier = Modifier,
     text: String,
     backgroundGradient: Gradient = GradientIvy,
@@ -169,7 +169,7 @@ private fun IconEnd(
 @Composable
 private fun PreviewIvyButtonWrapContentWithIconStart() {
     IvyWalletComponentPreview {
-        IvyButton(
+        BmButton(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .wrapContentSize(),
@@ -186,7 +186,7 @@ private fun PreviewIvyButtonWrapContentWithIconStart() {
 @Composable
 private fun PreviewIvyButtonFillMaxWidthWithIconStart() {
     IvyWalletComponentPreview {
-        IvyButton(
+        BmButton(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .fillMaxWidth(),
@@ -203,7 +203,7 @@ private fun PreviewIvyButtonFillMaxWidthWithIconStart() {
 @Composable
 private fun PreviewIvyButtonWrapContentWithIconEnd() {
     IvyWalletComponentPreview {
-        IvyButton(
+        BmButton(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .wrapContentSize(),
@@ -221,7 +221,7 @@ private fun PreviewIvyButtonWrapContentWithIconEnd() {
 @Composable
 private fun PreviewIvyButtonFillMaxWidthWithIconEnd() {
     IvyWalletComponentPreview {
-        IvyButton(
+        BmButton(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .fillMaxWidth(),

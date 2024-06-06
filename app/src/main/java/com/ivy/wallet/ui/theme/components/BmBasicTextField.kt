@@ -25,7 +25,7 @@ import com.ivy.wallet.ui.IvyWalletComponentPreview
 
 
 @Composable
-fun IvyBasicTextField(
+fun BmBasicTextField(
     modifier: Modifier = Modifier,
     value: TextFieldValue,
     textColor: Color = UI.colors.pureInverse,
@@ -86,7 +86,7 @@ fun IvyBasicTextField(
 @Composable
 private fun Preview_Hint() {
     IvyWalletComponentPreview {
-        IvyBasicTextField(
+        BmBasicTextField(
             value = selectEndTextFieldValue(""),
             hint = "Search transactions",
             onValueChanged = {}
@@ -98,7 +98,7 @@ private fun Preview_Hint() {
 @Composable
 private fun Preview_Filled() {
     IvyWalletComponentPreview {
-        IvyBasicTextField(
+        BmBasicTextField(
             value = selectEndTextFieldValue("sfds"),
             hint = "Okay",
             onValueChanged = {}

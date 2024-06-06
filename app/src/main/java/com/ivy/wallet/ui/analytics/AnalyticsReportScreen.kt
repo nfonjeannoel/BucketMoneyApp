@@ -35,7 +35,7 @@ import com.ivy.wallet.ui.theme.GradientIvy
 import com.ivy.wallet.ui.theme.Gray
 import com.ivy.wallet.ui.theme.Orange
 import com.ivy.wallet.ui.theme.components.CircleButton
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.IvyOutlinedButton
 import java.time.LocalDateTime
 
@@ -245,7 +245,7 @@ private fun ColumnScope.Content(
     ) {
         Spacer(Modifier.width(24.dp))
 
-        IvyButton(
+        BmButton(
             text = "KPIs",
             backgroundGradient = if (selectedTab == AnalyticsTab.KPIs) GradientIvy else Gradient.solid(
                 Gray
@@ -256,7 +256,7 @@ private fun ColumnScope.Content(
 
         Spacer(Modifier.width(16.dp))
 
-        IvyButton(
+        BmButton(
             text = "Onboarding",
             backgroundGradient = if (selectedTab == AnalyticsTab.Onboarding) GradientIvy else Gradient.solid(
                 Gray
@@ -267,7 +267,7 @@ private fun ColumnScope.Content(
 
         Spacer(Modifier.width(16.dp))
 
-        IvyButton(
+        BmButton(
             text = "Health",
             backgroundGradient = if (selectedTab == AnalyticsTab.Health) GradientIvy else Gradient.solid(
                 Gray
@@ -278,7 +278,7 @@ private fun ColumnScope.Content(
 
         Spacer(Modifier.width(16.dp))
 
-        IvyButton(
+        BmButton(
             text = "User Stats",
             backgroundGradient = if (selectedTab == AnalyticsTab.UserStats) GradientIvy else Gradient.solid(
                 Gray

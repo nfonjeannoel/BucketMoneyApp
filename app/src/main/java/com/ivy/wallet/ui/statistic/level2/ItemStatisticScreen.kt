@@ -722,7 +722,7 @@ private fun RowScope.HeaderCard(
 
         if (addButtonText != null) {
             val addButtonBackground = if (isIncome) Green else contrastColor
-            IvyButton(
+            BmButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)

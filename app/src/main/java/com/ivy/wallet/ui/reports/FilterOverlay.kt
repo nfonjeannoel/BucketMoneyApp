@@ -232,7 +232,7 @@ fun BoxWithConstraintsScope.FilterOverlay(
 
         Spacer(Modifier.weight(1f))
 
-        IvyButton(
+        BmButton(
             text = "Apply filter",
             iconStart = R.drawable.ic_filter_xs,
             backgroundGradient = GradientGreen,

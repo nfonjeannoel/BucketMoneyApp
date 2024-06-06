@@ -23,7 +23,7 @@ import com.ivy.wallet.ui.theme.GradientGreen
 import com.ivy.wallet.ui.theme.White
 import com.ivy.wallet.ui.theme.components.ActionsRow
 import com.ivy.wallet.ui.theme.components.CloseButton
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.gradientCutBackgroundTop
 
 @Composable
@@ -49,7 +49,7 @@ fun BoxWithConstraintsScope.PieChartStatisticBottomBar(
         Spacer(Modifier.weight(1f))
 
         val isIncome = type == TransactionType.INCOME
-        IvyButton(
+        BmButton(
             iconStart = R.drawable.ic_plus,
             text = if (isIncome) "Add income" else "Add expense",
             backgroundGradient = if (isIncome) GradientGreen else Gradient.solid(UI.colors.pureInverse),

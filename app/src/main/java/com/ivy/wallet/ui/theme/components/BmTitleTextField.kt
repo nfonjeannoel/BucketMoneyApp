@@ -27,7 +27,7 @@ import com.ivy.wallet.ui.IvyWalletComponentPreview
 
 
 @Composable
-fun ColumnScope.IvyTitleTextField(
+fun ColumnScope.BmTitleTextField(
     modifier: Modifier = Modifier,
     dividerModifier: Modifier = Modifier,
     value: TextFieldValue,
@@ -102,7 +102,7 @@ private fun PreviewIvyTitleTextField() {
         Column(
             verticalArrangement = Arrangement.Center
         ) {
-            IvyTitleTextField(
+            BmTitleTextField(
                 modifier = Modifier.padding(horizontal = 32.dp),
                 dividerModifier = Modifier.padding(horizontal = 24.dp),
                 value = TextFieldValue("Title"),

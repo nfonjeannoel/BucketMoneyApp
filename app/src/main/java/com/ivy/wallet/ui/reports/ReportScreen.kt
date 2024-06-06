@@ -350,7 +350,7 @@ private fun NoFilterEmptyState(
 
         Spacer(Modifier.height(32.dp))
 
-        IvyButton(
+        BmButton(
             iconStart = R.drawable.ic_filter_xs,
             text = "Set Filter"
         ) {

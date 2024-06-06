@@ -32,7 +32,7 @@ import com.ivy.wallet.ui.ItemStatistic
 import com.ivy.wallet.ui.IvyWalletPreview
 import com.ivy.wallet.ui.theme.*
 import com.ivy.wallet.ui.theme.components.ItemIconSDefaultIcon
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.IvyIcon
 import com.ivy.wallet.ui.theme.components.getCustomIconIdS
 import com.ivy.wallet.ui.theme.wallet.AmountCurrencyB1
@@ -158,7 +158,7 @@ fun LazyItemScope.TransactionCard(
             Spacer(Modifier.height(16.dp))
 
             val isExpense = transaction.type == TransactionType.EXPENSE
-            IvyButton(
+            BmButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
@@ -200,7 +200,7 @@ private fun TransactionHeaderRow(
                 transaction.smartCategoryId()
                     ?.let { targetId -> categories.find { it.id == targetId } }
             if (category != null) {
-                IvyButton(
+                BmButton(
                     text = category.name,
                     backgroundGradient = Gradient.solid(category.color.toComposeColor()),
                     hasGlow = false,
@@ -229,7 +229,7 @@ private fun TransactionHeaderRow(
 
             val account = accounts.find { it.id == transaction.accountId }
             //TODO: Rework that by using dedicated component for "Account"
-            IvyButton(
+            BmButton(
                 backgroundGradient = Gradient.solid(UI.colors.pure),
                 hasGlow = false,
                 iconTint = UI.colors.pureInverse,

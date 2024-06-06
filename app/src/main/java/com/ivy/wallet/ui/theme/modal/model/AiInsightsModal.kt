@@ -69,15 +69,21 @@ fun BoxWithConstraintsScope.AiInsightsModal(
         dismiss = dismiss,
         scrollState = modalScrollState,
         PrimaryAction = {
-            ModalStartChat(
-                // condition to enable set button
-                label = "Chat",
-                enabled = true
-            ) {
-                // on set button clicked
-                onChatClicked()
-                dismiss()
+            if (chatUiState.loading) {
+                // Display a loading indicator
+                CircularProgressIndicator()
+            } else {
+                ModalStartChat(
+                    // condition to enable set button
+                    label = "Chat",
+                    enabled = chatUiState.aiInsights.isNotNullOrBlank(),
+                ) {
+                    // on set button clicked
+                    onChatClicked()
+                    dismiss()
+                }
             }
+
         }
     ) {
         Spacer(Modifier.height(32.dp))
@@ -104,7 +110,7 @@ private fun DisplayAiInsights(
     Text(
         modifier = Modifier
             .padding(start = 32.dp),
-        text = "Ai analysis: ${period?.toDisplayLong(ivyContext.startDayOfMonth)}"
+        text = "AI Analysis: ${period?.toDisplayLong(ivyContext.startDayOfMonth)}"
             ?: "Selected Period",
         style = UI.typo.b1.style(
             color = if (period != null) UI.colors.pureInverse else Gray,
@@ -118,10 +124,6 @@ private fun DisplayAiInsights(
     Column(
         modifier = Modifier.padding(start = 32.dp, end = 32.dp)
     ) {
-        if (chatUiState.loading) {
-            // Display a loading indicator
-            CircularProgressIndicator()
-        }
         if (chatUiState.error != null) {
             // Display the error message
             Text(text = chatUiState.error)

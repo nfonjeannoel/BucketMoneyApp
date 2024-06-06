@@ -31,7 +31,7 @@ import com.ivy.wallet.ui.Search
 import com.ivy.wallet.ui.ivyWalletCtx
 import com.ivy.wallet.ui.theme.Gray
 
-import com.ivy.wallet.ui.theme.components.IvyBasicTextField
+import com.ivy.wallet.ui.theme.components.BmBasicTextField
 import com.ivy.wallet.ui.theme.components.IvyIcon
 import com.ivy.wallet.ui.theme.modal.DURATION_MODAL_KEYBOARD
 import com.ivy.wallet.ui.theme.transaction.transactions
@@ -165,7 +165,7 @@ private fun SearchInput(
         Spacer(Modifier.width(12.dp))
 
         val searchFocus = FocusRequester()
-        IvyBasicTextField(
+        BmBasicTextField(
             modifier = Modifier
                 .padding(vertical = 12.dp)
                 .focusRequester(searchFocus),

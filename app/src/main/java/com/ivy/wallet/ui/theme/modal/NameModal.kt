@@ -15,7 +15,7 @@ import com.ivy.design.l0_system.style
 import com.ivy.wallet.base.selectEndTextFieldValue
 import com.ivy.wallet.ui.IvyWalletPreview
 
-import com.ivy.wallet.ui.theme.components.IvyTitleTextField
+import com.ivy.wallet.ui.theme.components.BmTitleTextField
 import java.util.*
 
 @Composable
@@ -52,7 +52,7 @@ fun BoxWithConstraintsScope.NameModal(
 
         Spacer(Modifier.height(32.dp))
 
-        IvyTitleTextField(
+        BmTitleTextField(
             modifier = Modifier.padding(horizontal = 32.dp),
             dividerModifier = Modifier.padding(horizontal = 24.dp),
             value = modalName,

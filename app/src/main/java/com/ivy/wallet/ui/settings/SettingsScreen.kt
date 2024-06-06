@@ -37,7 +37,7 @@ import com.ivy.wallet.model.IvyCurrency
 import com.ivy.wallet.model.entity.User
 import com.ivy.wallet.ui.*
 import com.ivy.wallet.ui.theme.*
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.IvyIcon
 import com.ivy.wallet.ui.theme.components.IvySwitch
 import com.ivy.wallet.ui.theme.components.IvyToolbar
@@ -748,7 +748,7 @@ private fun AccountCardUser(
                 }
             } else {
                 //not synced
-                IvyButton(
+                BmButton(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     iconStart = R.drawable.ic_sync,
                     text = "Tap to sync",
@@ -759,7 +759,7 @@ private fun AccountCardUser(
             }
         }
         is OpResult.Failure -> {
-            IvyButton(
+            BmButton(
                 modifier = Modifier.padding(horizontal = 24.dp),
                 iconStart = R.drawable.ic_sync,
                 text = "Sync failed. Tap to sync",

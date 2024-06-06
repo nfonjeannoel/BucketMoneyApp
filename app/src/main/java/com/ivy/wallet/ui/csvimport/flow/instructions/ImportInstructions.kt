@@ -330,9 +330,11 @@ private fun App(
         modifier = Modifier
             .padding(horizontal = 32.dp)
             .clickable {
-                ivyActivity.openGooglePlayAppPage(
-                    appId = importType.appId()
-                )
+                if (importType.appId() != "com.ivy.wallet") {
+                    ivyActivity.openGooglePlayAppPage(
+                        appId = importType.appId()
+                    )
+                }
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

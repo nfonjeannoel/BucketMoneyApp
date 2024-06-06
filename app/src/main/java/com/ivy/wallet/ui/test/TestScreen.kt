@@ -15,7 +15,7 @@ import com.ivy.wallet.ui.AnalyticsReport
 import com.ivy.wallet.ui.IvyWalletPreview
 import com.ivy.wallet.ui.Test
 import com.ivy.wallet.ui.theme.Ivy
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.modal.ChooseIconModal
 
 @Composable
@@ -58,7 +58,7 @@ private fun BoxWithConstraintsScope.UI(
         if (user != null && user.testUser) {
             Spacer(Modifier.height(32.dp))
 
-            IvyButton(text = "Analytics") {
+            BmButton(text = "Analytics") {
                 nav.navigateTo(AnalyticsReport)
             }
         }

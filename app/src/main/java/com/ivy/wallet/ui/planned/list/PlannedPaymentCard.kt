@@ -30,7 +30,7 @@ import com.ivy.wallet.ui.ItemStatistic
 import com.ivy.wallet.ui.IvyWalletPreview
 import com.ivy.wallet.ui.theme.Gradient
 import com.ivy.wallet.ui.theme.Orange
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.IvyIcon
 import com.ivy.wallet.ui.theme.components.getCustomIconIdS
 import com.ivy.wallet.ui.theme.findContrastTextColor
@@ -132,7 +132,7 @@ private fun PlannedPaymentHeaderRow(
             val category =
                 plannedPayment.categoryId?.let { targetId -> categories.find { it.id == targetId } }
             if (category != null) {
-                IvyButton(
+                BmButton(
                     iconTint = findContrastTextColor(category.color.toComposeColor()),
                     iconStart = getCustomIconIdS(category.icon, R.drawable.ic_custom_category_s),
                     text = category.name,
@@ -156,7 +156,7 @@ private fun PlannedPaymentHeaderRow(
             }
 
             val account = accounts.find { it.id == plannedPayment.accountId }
-            IvyButton(
+            BmButton(
                 backgroundGradient = Gradient.solid(UI.colors.pure),
                 text = account?.name ?: "deleted",
                 iconTint = UI.colors.pureInverse,

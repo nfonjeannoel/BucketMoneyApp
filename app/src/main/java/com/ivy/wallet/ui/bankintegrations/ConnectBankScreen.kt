@@ -21,7 +21,7 @@ import com.ivy.wallet.ui.ConnectBank
 import com.ivy.wallet.ui.IvyActivity
 import com.ivy.wallet.ui.IvyWalletPreview
 import com.ivy.wallet.ui.theme.Orange
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.IvySwitch
 
 @Composable
@@ -69,13 +69,13 @@ private fun UI(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        IvyButton(text = "Connect") {
+        BmButton(text = "Connect") {
             onConnect()
         }
 
         Spacer(Modifier.height(24.dp))
 
-        IvyButton(text = "Sync transactions") {
+        BmButton(text = "Sync transactions") {
             onFetchTransactions()
         }
 
@@ -111,7 +111,7 @@ private fun UI(
 
         Spacer(Modifier.height(24.dp))
 
-        IvyButton(text = "Remove customer") {
+        BmButton(text = "Remove customer") {
             onRemoveCustomer()
         }
     }

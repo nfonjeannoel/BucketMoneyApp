@@ -12,7 +12,7 @@ import com.ivy.wallet.model.entity.Category
 import com.ivy.wallet.ui.theme.Gradient
 
 import com.ivy.wallet.ui.theme.components.IvyBorderButton
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.getCustomIconIdS
 import com.ivy.wallet.ui.theme.findContrastTextColor
 import com.ivy.wallet.ui.theme.toComposeColor
@@ -44,7 +44,7 @@ private fun CategoryButton(
     onClick: () -> Unit,
 ) {
     val contrastColor = findContrastTextColor(category.color.toComposeColor())
-    IvyButton(
+    BmButton(
         modifier = Modifier.padding(start = 24.dp),
         text = category.name,
         iconStart = getCustomIconIdS(

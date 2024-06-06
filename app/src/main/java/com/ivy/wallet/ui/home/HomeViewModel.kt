@@ -255,9 +255,6 @@ class HomeViewModel @Inject constructor(
 
             _history.value.forEachIndexed { index, transactionHistoryItem ->
                 if (transactionHistoryItem is Transaction) {
-//                    Timber.tag(TAG).d("found transaction ${transactionHistoryItem.amount}")
-//                    previousMessages.plus("$index.${transactionHistoryItem.toChatGptPrompt()}")
-//                    previousMessages.add("$index.${transactionHistoryItem.toChatGptPrompt()}")
                     val transactionString = "$index.${transactionHistoryItem.toChatGptPrompt()}"
                     _chatUiState.value = _chatUiState.value.copy(
                         transactionsString = _chatUiState.value.transactionsString + transactionString
@@ -269,6 +266,13 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
+            }
+
+            if (_chatUiState.value.transactionsString.isNullOrEmpty()) {
+                _chatUiState.value = _chatUiState.value.copy(
+                    loading = false,
+                )
+                return@launch
             }
 
             val chatMessageContext: MutableList<ChatMessage> = mutableListOf()
@@ -290,10 +294,10 @@ class HomeViewModel @Inject constructor(
 
 //            Timber.tag(TAG).d(chatMessageContext.toString())
 
-            val openAI = OpenAI(Constants.OPEN_AI_API_KEY)
 
             val extraPromptDetails = "Currency is ${baseCurrencyCode.value}."
 
+            val openAI = OpenAI(Constants.OPEN_AI_API_KEY)
             val chatCompletionRequest = ChatCompletionRequest(
                 model = ModelId("gpt-3.5-turbo"),
                 messages = listOf(

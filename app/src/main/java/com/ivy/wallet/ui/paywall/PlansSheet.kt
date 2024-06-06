@@ -29,7 +29,7 @@ import com.ivy.wallet.ui.IvyWalletPreview
 import com.ivy.wallet.ui.theme.*
 import com.ivy.wallet.ui.theme.components.ActionsRow
 import com.ivy.wallet.ui.theme.components.CloseButton
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.modal.AddModalBackHandling
 import com.ivy.wallet.ui.theme.modal.ModalTitle
 import java.util.*
@@ -139,7 +139,7 @@ fun BoxWithConstraintsScope.PlansSheet(
                 Spacer(Modifier.height(64.dp))
 
                 if (!purchasedSkus.contains(selectedPlan?.sku ?: "")) {
-                    IvyButton(
+                    BmButton(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),

@@ -11,7 +11,7 @@ import com.ivy.wallet.R
 import com.ivy.wallet.ui.IvyWalletPreview
 import com.ivy.wallet.ui.theme.Blue
 import com.ivy.wallet.ui.theme.components.BackBottomBar
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 
 @Composable
 internal fun BoxWithConstraintsScope.LoanBottomBar(
@@ -19,7 +19,7 @@ internal fun BoxWithConstraintsScope.LoanBottomBar(
     onAdd: () -> Unit
 ) {
     BackBottomBar(onBack = onClose) {
-        IvyButton(
+        BmButton(
             text = "Add loan",
             iconStart = R.drawable.ic_plus
         ) {

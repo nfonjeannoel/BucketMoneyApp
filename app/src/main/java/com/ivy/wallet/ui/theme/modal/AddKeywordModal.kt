@@ -18,7 +18,7 @@ import com.ivy.wallet.base.onScreenStart
 import com.ivy.wallet.base.selectEndTextFieldValue
 import com.ivy.wallet.ui.IvyWalletPreview
 
-import com.ivy.wallet.ui.theme.components.IvyTitleTextField
+import com.ivy.wallet.ui.theme.components.BmTitleTextField
 import java.util.*
 
 @Composable
@@ -61,7 +61,7 @@ fun BoxWithConstraintsScope.AddKeywordModal(
             inputFocus.requestFocus()
         }
 
-        IvyTitleTextField(
+        BmTitleTextField(
             modifier = Modifier
                 .padding(horizontal = 32.dp)
                 .focusRequester(inputFocus),

@@ -16,7 +16,7 @@ import com.ivy.wallet.ui.theme.GradientGreen
 import com.ivy.wallet.ui.theme.GradientIvy
 import com.ivy.wallet.ui.theme.GradientRed
 import com.ivy.wallet.ui.theme.White
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 import com.ivy.wallet.ui.theme.components.IvyCircleButton
 import com.ivy.wallet.ui.theme.components.IvyOutlinedButton
 
@@ -167,7 +167,7 @@ fun ModalNegativeButton(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    IvyButton(
+    BmButton(
         text = text,
         backgroundGradient = GradientRed,
         iconStart = iconStart,
@@ -184,7 +184,7 @@ fun ModalPositiveButton(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    IvyButton(
+    BmButton(
         modifier = modifier,
         text = text,
         backgroundGradient = GradientGreen,
@@ -201,7 +201,7 @@ fun ModalPrimaryButton(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    IvyButton(
+    BmButton(
         text = text,
         backgroundGradient = GradientIvy,
         iconStart = iconStart,

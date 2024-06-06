@@ -27,7 +27,7 @@ import com.ivy.wallet.ui.theme.Gray
 
 
 import com.ivy.wallet.ui.theme.White
-import com.ivy.wallet.ui.theme.components.IvyButton
+import com.ivy.wallet.ui.theme.components.BmButton
 
 @Composable
 fun BoxWithConstraintsScope.AppLockedScreen(
@@ -77,7 +77,7 @@ fun BoxWithConstraintsScope.AppLockedScreen(
         Spacer(Modifier.height(24.dp))
 
         val context = LocalContext.current
-        IvyButton(
+        BmButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),

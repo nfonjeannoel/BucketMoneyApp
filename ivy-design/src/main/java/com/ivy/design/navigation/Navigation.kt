@@ -19,6 +19,10 @@ class Navigation {
         val id: UUID,
         val onBackPressed: () -> Boolean
     )
+    private fun switchScreen(screen: Screen) {
+        this.currentScreen = screen
+        lastScreen = screen
+    }
 
     fun lastModalBackHandlerId(): UUID? {
         return if (modalBackHandling.isEmpty()) {
@@ -80,10 +84,6 @@ class Navigation {
         }
     }
 
-    private fun switchScreen(screen: Screen) {
-        this.currentScreen = screen
-        lastScreen = screen
-    }
 
     fun reset() {
         currentScreen = null
