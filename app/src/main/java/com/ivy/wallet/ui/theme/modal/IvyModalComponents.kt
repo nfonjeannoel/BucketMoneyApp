@@ -17,8 +17,10 @@ import com.ivy.wallet.ui.theme.GradientIvy
 import com.ivy.wallet.ui.theme.GradientRed
 import com.ivy.wallet.ui.theme.White
 import com.ivy.wallet.ui.theme.components.BmButton
+import com.ivy.wallet.ui.theme.components.BmIconButton
 import com.ivy.wallet.ui.theme.components.IvyCircleButton
 import com.ivy.wallet.ui.theme.components.IvyOutlinedButton
+import kotlinx.serialization.json.JsonNull.content
 
 @Composable
 fun ModalDynamicPrimaryAction(
@@ -36,6 +38,7 @@ fun ModalDynamicPrimaryAction(
                 dismiss()
             }
         }
+
         else -> {
             if (!initialChanged) {
                 ModalDelete {
@@ -193,6 +196,22 @@ fun ModalPositiveButton(
         enabled = enabled
     )
 }
+
+@Composable
+fun ModalLoadingButton(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+
+    ) {
+    BmIconButton(
+        modifier = modifier,
+        enabled = true,
+        backgroundGradient = GradientGreen,
+    ) {
+        content()
+    }
+}
+
 
 @Composable
 fun ModalPrimaryButton(

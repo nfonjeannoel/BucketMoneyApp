@@ -3,9 +3,11 @@ package com.ivy.wallet.ui.theme.modal.model
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,8 +31,10 @@ import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.theme.*
 import com.ivy.wallet.ui.theme.components.IvyDividerLine
 import com.ivy.wallet.ui.theme.modal.IvyModal
+import com.ivy.wallet.ui.theme.modal.ModalLoadingButton
 import com.ivy.wallet.ui.theme.modal.ModalStartChat
 import com.ivy.wallet.ui.theme.modal.model.Month.Companion.fromMonthValue
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -73,7 +77,11 @@ fun BoxWithConstraintsScope.AiInsightsModal(
         PrimaryAction = {
             if (chatUiState.loading) {
                 // Display a loading indicator
-                CircularProgressIndicator()
+                ModalLoadingButton(){
+                    CircularProgressIndicator(
+                        color = White,
+                    )
+                }
             } else {
                 ModalStartChat(
                     // condition to enable set button
@@ -133,7 +141,13 @@ private fun DisplayAiInsights(
         }
         if (chatUiState.aiInsights != null) {
             // Display the AI insights
-            Text(text = chatUiState.aiInsights)
+//            Text(text = chatUiState.aiInsights)
+            MarkdownText(
+                markdown =chatUiState.aiInsights,
+                style = LocalTextStyle.current
+                    .style(UI.colors.pureInverse),
+
+            )
         }
         if (chatUiState.transactionsString.isNullOrEmpty()) {
             // Display a message when there are no transactions

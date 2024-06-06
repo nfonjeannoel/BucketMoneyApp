@@ -301,6 +301,9 @@ fun DependencyHandler.ThirdParty() {
     implementation("io.ktor:ktor-client-okhttp")
 
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+
+    // markdown
+    implementation("com.github.jeziellago:compose-markdown:0.5.0")
 }
 
 fun DependencyHandler.FunctionalProgramming(

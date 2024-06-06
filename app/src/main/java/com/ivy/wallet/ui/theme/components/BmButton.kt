@@ -28,6 +28,7 @@ import com.ivy.wallet.ui.theme.Gradient
 import com.ivy.wallet.ui.theme.GradientIvy
 import com.ivy.wallet.ui.theme.Ivy
 import com.ivy.wallet.ui.theme.White
+import kotlinx.serialization.json.JsonNull.content
 
 @Composable
 fun BmButton(
@@ -126,6 +127,53 @@ fun BmButton(
                 Spacer(modifier = Modifier.width(24.dp))
             }
         }
+    }
+}
+
+
+@Composable
+fun BmIconButton(
+    modifier: Modifier = Modifier,
+    backgroundGradient: Gradient = GradientIvy,
+    enabled: Boolean = true,
+    shadowAlpha: Float = 0.15f,
+    wrapContentMode: Boolean = true,
+    hasGlow: Boolean = true,
+    content : @Composable () -> Unit,
+
+    ) {
+    Row(
+        modifier = modifier
+            .thenIf(enabled && hasGlow) {
+                drawColoredShadow(
+                    color = backgroundGradient.startColor,
+                    borderRadius = 0.dp,
+                    shadowRadius = 16.dp,
+                    alpha = shadowAlpha,
+                    offsetX = 0.dp,
+                    offsetY = 8.dp
+                )
+            }
+            .clip(UI.shapes.rFull)
+            .background(
+                brush = if (enabled)
+                    backgroundGradient.asHorizontalBrush() else SolidColor(UI.colors.gray),
+                shape = UI.shapes.rFull
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+
+        if (!wrapContentMode) {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        content()
+
+        if (!wrapContentMode) {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
     }
 }
 
