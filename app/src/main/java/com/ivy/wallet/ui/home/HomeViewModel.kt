@@ -1,5 +1,6 @@
 package com.ivy.wallet.ui.home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aallam.openai.api.chat.ChatCompletionChunk
@@ -39,7 +40,9 @@ import com.ivy.wallet.ui.main.MainTab
 import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.onboarding.model.toCloseTimeRange
 import com.ivy.wallet.ui.theme.modal.model.OpenAiPrompt
+import com.ivy.wallet.ui.vibratePhone
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -80,7 +83,8 @@ class HomeViewModel @Inject constructor(
     private val exchangeRatesLogic: ExchangeRatesLogic,
     private val plannedPaymentsLogic: PlannedPaymentsLogic,
     private val customerJourneyLogic: CustomerJourneyLogic,
-    private val sharedPrefs: SharedPrefs
+    private val sharedPrefs: SharedPrefs,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     val TAG = "HomeViewModel"
     val TEMPERATURE = 0.2
@@ -330,6 +334,9 @@ class HomeViewModel @Inject constructor(
                             aiInsights = _chatUiState.value.aiInsights + it,
                         )
                     }
+                    context.vibratePhone(
+                        amplitude = 10
+                    )
                 }
 //                Timber.tag(TAG).d("Done with completion")
                 _chatUiState.value = _chatUiState.value.copy(loading = false, error = "")

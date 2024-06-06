@@ -1,5 +1,9 @@
 package com.ivy.wallet.ui
 
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -26,6 +30,15 @@ fun ivyWalletCtx(): IvyWalletCtx {
 
 fun appDesign(context: IvyWalletCtx): IvyDesign = object : IvyWalletDesign() {
     override fun context(): IvyContext = context
+}
+
+fun Context.vibratePhone(duration: Long = 50, amplitude: Int = VibrationEffect.DEFAULT_AMPLITUDE) {
+    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        vibrator.vibrate(VibrationEffect.createOneShot(duration, amplitude))
+    } else {
+        vibrator.vibrate(duration)
+    }
 }
 
 @Composable
