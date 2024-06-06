@@ -50,9 +50,9 @@ data class AiInsightsModalData(
 
 object OpenAiPrompt {
     val systemPrompt =
-        "You are Bucket Money AI, a helpful and knowledgeable money manager. Your role is to provide personalized financial advice, insights, and overviews based on user transactions. You should consider various financial metrics, user spending patterns, and financial goals to offer the most relevant and practical advice. Ensure your responses are clear, concise, and actionable."
+        "You are Bucket Money AI, a helpful and knowledgeable money manager. Your role is to provide personalized financial advice, insights, and overviews based on user transactions. You should consider various financial metrics, user spending patterns, and financial goals to offer the most relevant and practical advice. Ensure your responses are clear, concise, and actionable. Always aim to help users optimize their spending, identify savings opportunities, and achieve their financial goals while being mindful of their unique financial situations."
     val userPrompt =
-        "With this message is a list of my recent transactions. Based on this information, please analyze my spending habits and provide personalized financial advice. Specifically, identify areas where I can save money, suggest budget adjustments, and highlight any unusual spending patterns. Additionally, offer tips to help me achieve my financial goals."
+        "Attached is a list of my recent transactions. Based on this information, please analyze my spending habits and provide personalized financial advice. Specifically, identify areas where I can save money, suggest budget adjustments, and highlight any unusual spending patterns. Additionally, offer practical tips and strategies to help me achieve my financial goals, such as saving for a major purchase or reducing debt. Where possible, make references to one or more of the transactions over a specific period."
 }
 
 val TAG = "aiinsightmodel"
