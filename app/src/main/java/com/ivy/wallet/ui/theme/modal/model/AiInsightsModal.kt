@@ -17,6 +17,7 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.ivy.design.l0_system.UI
 import com.ivy.design.l0_system.style
+import com.ivy.design.l1_buildingBlocks.data.background
 import com.ivy.wallet.Constants
 import com.ivy.wallet.base.*
 import com.ivy.wallet.model.TransactionHistoryItem
@@ -26,6 +27,7 @@ import com.ivy.wallet.ui.home.ChatUiState
 import com.ivy.wallet.ui.ivyWalletCtx
 import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.theme.*
+import com.ivy.wallet.ui.theme.components.IvyDividerLine
 import com.ivy.wallet.ui.theme.modal.IvyModal
 import com.ivy.wallet.ui.theme.modal.ModalStartChat
 import com.ivy.wallet.ui.theme.modal.model.Month.Companion.fromMonthValue
@@ -117,8 +119,9 @@ private fun DisplayAiInsights(
             fontWeight = FontWeight.ExtraBold
         )
     )
+    IvyDividerLine()
 
-    Spacer(Modifier.height(24.dp))
+    Spacer(Modifier.height(12.dp))
 
 
     Column(
