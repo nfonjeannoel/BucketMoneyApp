@@ -43,6 +43,7 @@ import com.ivy.wallet.ui.theme.modal.model.OpenAiPrompt
 import com.ivy.wallet.ui.vibratePhone
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -163,6 +164,8 @@ class HomeViewModel @Inject constructor(
     private val _customerJourneyCards = MutableStateFlow<List<CustomerJourneyCardData>>(emptyList())
     val customerJourneyCards = _customerJourneyCards.readOnly()
 
+    private var aiResponseJob: Job? = null
+
     fun start() {
         viewModelScope.launch {
             TestIdlingResource.increment()
@@ -247,7 +250,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getCompletion() {
-        viewModelScope.launch {
+        aiResponseJob = viewModelScope.launch {
             _chatUiState.value = _chatUiState.value.copy(
                 loading = true,
                 error = "",
@@ -341,11 +344,20 @@ class HomeViewModel @Inject constructor(
 //                Timber.tag(TAG).d("Done with completion")
                 _chatUiState.value = _chatUiState.value.copy(loading = false, error = "")
             } catch (e: Exception) {
-                _chatUiState.value = _chatUiState.value.copy(error = e.message, loading = false)
+                Timber.tag(TAG).e(e)
+                _chatUiState.value = _chatUiState.value.copy(
+                    error = "Oops! Bucket Money AI is taking a short break and can't provide insights right now. Remember, as Warren Buffett said, 'Do not save what is left after spending, but spend what is left after saving.' Stay tuned for updates!",
+                    loading = false
+                )
+
             }
 
         }
 
+    }
+
+    fun stopAiResponseJob() {
+        aiResponseJob?.cancel()
     }
 
     private fun loadNewTheme() {

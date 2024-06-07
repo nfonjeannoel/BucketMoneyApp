@@ -131,7 +131,8 @@ fun BoxWithConstraintsScope.HomeTab(screen: Main) {
         onDismissCustomerJourneyCard = viewModel::dismissCustomerJourneyCard,
         onSelectNextMonth = viewModel::nextMonth,
         onSelectPreviousMonth = viewModel::previousMonth,
-        getCompletion = viewModel::getCompletion
+        getCompletion = viewModel::getCompletion,
+        stopAiResponseJob = viewModel::stopAiResponseJob
     )
 }
 
@@ -180,7 +181,8 @@ private fun BoxWithConstraintsScope.UI(
     onDismissCustomerJourneyCard: (CustomerJourneyCardData) -> Unit = {},
     onSelectNextMonth: () -> Unit = {},
     onSelectPreviousMonth: () -> Unit = {},
-    getCompletion: () -> Unit = {}
+    getCompletion: () -> Unit = {},
+    stopAiResponseJob: () -> Unit = {}
 ) {
     val ivyContext = ivyWalletCtx()
 
@@ -353,6 +355,7 @@ private fun BoxWithConstraintsScope.UI(
         chatUiState = chatUiState,
         dismiss = {
             aiInsightsModal = null
+            stopAiResponseJob()
         }
     ) {
         onChatClicked()
