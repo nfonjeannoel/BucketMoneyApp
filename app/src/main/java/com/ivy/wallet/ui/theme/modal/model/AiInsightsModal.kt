@@ -77,7 +77,7 @@ fun BoxWithConstraintsScope.AiInsightsModal(
         PrimaryAction = {
             if (chatUiState.loading) {
                 // Display a loading indicator
-                ModalLoadingButton(){
+                ModalLoadingButton{
                     CircularProgressIndicator(
                         color = White,
                     )

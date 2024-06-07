@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ivy.design.navigation.Navigation
 import com.ivy.wallet.analytics.IvyAnalytics
 import com.ivy.wallet.base.*
 import com.ivy.wallet.logic.LogoutLogic
@@ -21,6 +22,7 @@ import com.ivy.wallet.persistence.dao.SettingsDao
 import com.ivy.wallet.persistence.dao.UserDao
 import com.ivy.wallet.session.IvySession
 import com.ivy.wallet.sync.IvySync
+import com.ivy.wallet.ui.AIAnalysisChat
 import com.ivy.wallet.ui.IvyActivity
 import com.ivy.wallet.ui.IvyWalletCtx
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +47,8 @@ class SettingsViewModel @Inject constructor(
     private val exchangeRatesLogic: ExchangeRatesLogic,
     private val logoutLogic: LogoutLogic,
     private val sharedPrefs: SharedPrefs,
-    private val exportZipLogic: ExportZipLogic
+    private val exportZipLogic: ExportZipLogic,
+    private val nav: Navigation
 ) : ViewModel() {
 
     private val _user = MutableLiveData<User?>()
@@ -331,6 +334,19 @@ class SettingsViewModel @Inject constructor(
                 e.printStackTrace()
             }
             logout()
+        }
+    }
+
+
+    fun onAiChatClicked() {
+        viewModelScope.launch {
+            TestIdlingResource.increment()
+
+            nav.navigateTo(
+                AIAnalysisChat()
+            )
+
+            TestIdlingResource.decrement()
         }
     }
 }

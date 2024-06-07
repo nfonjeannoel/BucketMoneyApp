@@ -47,6 +47,7 @@ import com.ivy.wallet.Constants
 import com.ivy.wallet.base.*
 import com.ivy.wallet.logic.CustomerJourneyLogic
 import com.ivy.wallet.model.TransactionType
+import com.ivy.wallet.ui.analysis.AIAnalysisChatScreen
 import com.ivy.wallet.ui.analytics.AnalyticsReport
 import com.ivy.wallet.ui.applocked.AppLockedScreen
 import com.ivy.wallet.ui.balance.BalanceScreen
@@ -189,6 +190,7 @@ class IvyActivity : AppCompatActivity() {
             is EditTransaction -> EditTransactionScreen(screen = screen)
             is ItemStatistic -> ItemStatisticScreen(screen = screen)
             is PieChartStatistic -> PieChartStatisticScreen(screen = screen)
+            is AIAnalysisChat -> AIAnalysisChatScreen(screen = screen)
             is Categories -> CategoriesScreen(screen = screen)
             is Settings -> SettingsScreen(screen = screen)
             is PlannedPayments -> PlannedPaymentsScreen(screen = screen)

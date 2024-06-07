@@ -99,7 +99,8 @@ fun BoxWithConstraintsScope.SettingsScreen(screen: Settings) {
                 body = body
             )
         },
-        onDeleteAllUserData = viewModel::deleteAllUserData
+        onDeleteAllUserData = viewModel::deleteAllUserData,
+        onAiChatClicked = viewModel::onAiChatClicked
     )
 }
 
@@ -130,7 +131,8 @@ private fun BoxWithConstraintsScope.UI(
     onSetShowNotifications: (Boolean) -> Unit = {},
     onSetStartDateOfMonth: (Int) -> Unit = {},
     onRequestFeature: (String, String) -> Unit = { _, _ -> },
-    onDeleteAllUserData: () -> Unit = {}
+    onDeleteAllUserData: () -> Unit = {},
+    onAiChatClicked: () -> Unit = {}
 ) {
     var currencyModalVisible by remember { mutableStateOf(false) }
     var nameModalVisible by remember { mutableStateOf(false) }
@@ -216,7 +218,7 @@ private fun BoxWithConstraintsScope.UI(
                 text = "Get AI Insights",
                 backgroundGradient = GradientIvy
             ) {
-//                ivyActivity.reviewIvyWallet(dismissReviewCard = false)
+                onAiChatClicked()
             }
 
 //            Spacer(Modifier.height(12.dp))
@@ -721,6 +723,7 @@ private fun AccountCardUser(
                 Spacer(Modifier.width(24.dp))
             }
         }
+
         is OpResult.Success -> {
             if (opSync.data) {
                 //synced
@@ -758,6 +761,7 @@ private fun AccountCardUser(
                 }
             }
         }
+
         is OpResult.Failure -> {
             BmButton(
                 modifier = Modifier.padding(horizontal = 24.dp),
@@ -768,6 +772,7 @@ private fun AccountCardUser(
                 onSync()
             }
         }
+
         else -> {}
     }
 
@@ -1068,10 +1073,10 @@ private fun Preview_synced() {
     IvyWalletPreview {
         UI(
             user = User(
-                email = "iliyan.germanov971@gmail.com",
+                email = "nfonjeannoel1@gmail.com",
                 authProviderType = AuthProviderType.GOOGLE,
-                firstName = "Iliyan",
-                lastName = "Germanov",
+                firstName = "NFON",
+                lastName = "JEANNOEL",
                 color = 11,
                 id = UUID.randomUUID(),
                 profilePicture = null
@@ -1095,10 +1100,10 @@ private fun Preview_notSynced() {
     IvyWalletPreview {
         UI(
             user = User(
-                email = "iliyan.germanov971@gmail.com",
+                email = "nfonjeannoel1@gmail.com",
                 authProviderType = AuthProviderType.GOOGLE,
-                firstName = "Iliyan",
-                lastName = "Germanov",
+                firstName = "NFON",
+                lastName = "JEANNOEL",
                 color = 11,
                 id = UUID.randomUUID(),
                 profilePicture = null
@@ -1122,9 +1127,9 @@ private fun Preview_loading() {
     IvyWalletPreview {
         UI(
             user = User(
-                email = "iliyan.germanov971@gmail.com",
+                email = "nfonjeannoel1@gmail.com",
                 authProviderType = AuthProviderType.GOOGLE,
-                firstName = "Iliyan",
+                firstName = "NFON",
                 lastName = null,
                 color = 11,
                 id = UUID.randomUUID(),
@@ -1149,9 +1154,9 @@ private fun Preview_localAccount() {
     IvyWalletPreview {
         UI(
             user = null,
-            nameLocalAccount = "Iliyan",
+            nameLocalAccount = "JEANNOEL",
             opSync = null,
-            currencyCode = "BGN",
+            currencyCode = "XAF",
             lockApp = false,
             onSetCurrency = {},
             onLogout = {},

@@ -35,6 +35,11 @@ data class PieChartStatistic(
     val transactions: List<Transaction> = emptyList()
 ) : Screen
 
+data class AIAnalysisChat(
+    val previousAiAnalysis: String = "",
+) : Screen
+
+
 data class EditPlanned(
     val plannedPaymentRuleId: UUID?,
     val type: TransactionType,

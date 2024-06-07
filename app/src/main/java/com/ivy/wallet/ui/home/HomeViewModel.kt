@@ -9,6 +9,7 @@ import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
+import com.ivy.design.api.navigation
 import com.ivy.design.l0_system.Theme
 import com.ivy.design.navigation.Navigation
 import com.ivy.wallet.Constants
@@ -33,6 +34,7 @@ import com.ivy.wallet.model.entity.Transaction
 import com.ivy.wallet.persistence.SharedPrefs
 import com.ivy.wallet.persistence.dao.CategoryDao
 import com.ivy.wallet.persistence.dao.SettingsDao
+import com.ivy.wallet.ui.AIAnalysisChat
 import com.ivy.wallet.ui.BalanceScreen
 import com.ivy.wallet.ui.IvyWalletCtx
 import com.ivy.wallet.ui.Main
@@ -346,7 +348,7 @@ class HomeViewModel @Inject constructor(
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
                 _chatUiState.value = _chatUiState.value.copy(
-                    error = "Oops! Bucket Money AI is taking a short break and can't provide insights right now. Remember, as Warren Buffett said, 'Do not save what is left after spending, but spend what is left after saving.' Stay tuned for updates!",
+                    error = "Oops! Bucket Money AI had an issue connecting and can't provide insights right now. Remember, as Warren Buffett said, 'Do not save what is left after spending, but spend what is left after saving.' Stay tuned for updates!",
                     loading = false
                 )
 
@@ -457,7 +459,15 @@ class HomeViewModel @Inject constructor(
     }
 
     fun chatClicked() {
-        // handle chat stuff
+        viewModelScope.launch {
+            TestIdlingResource.increment()
+            nav.navigateTo(
+                AIAnalysisChat(
+                    previousAiAnalysis = _chatUiState.value.aiInsights ?: "",
+                )
+            )
+            TestIdlingResource.decrement()
+        }
     }
 
     fun payOrGet(transaction: Transaction) {
