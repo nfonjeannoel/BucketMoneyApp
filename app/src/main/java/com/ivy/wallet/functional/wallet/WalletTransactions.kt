@@ -30,6 +30,17 @@ suspend fun historyWithDateDividers(
     )
 }
 
+
+//suspend fun historyItems(
+//    walletDAOs: WalletDAOs,
+//    range: ClosedTimeRange
+//): List<TransactionHistoryItem> {
+//    return history(
+//        transactionDao = walletDAOs.transactionDao,
+//        range = range
+//    )
+//}
+
 suspend fun history(
     transactionDao: TransactionDao,
     range: ClosedTimeRange

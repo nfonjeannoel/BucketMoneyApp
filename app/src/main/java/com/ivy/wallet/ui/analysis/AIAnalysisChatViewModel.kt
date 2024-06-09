@@ -1,78 +1,77 @@
 package com.ivy.wallet.ui.analysis
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aallam.openai.api.chat.ChatCompletionChunk
+import com.aallam.openai.api.chat.ChatCompletionRequest
+import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.chat.ChatRole
+import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.OpenAI
+import com.ivy.wallet.Constants
+import com.ivy.wallet.base.TestIdlingResource
 import com.ivy.wallet.base.dateNowUTC
 import com.ivy.wallet.base.ioThread
 import com.ivy.wallet.base.isNotNullOrBlank
 import com.ivy.wallet.base.readOnly
-import com.ivy.wallet.base.scopedIOThread
-import com.ivy.wallet.functional.category.calculateCategoryExpenseWithAccountFilters
-import com.ivy.wallet.functional.category.calculateCategoryIncomeWithAccountFilters
-import com.ivy.wallet.functional.data.WalletDAOs
-import com.ivy.wallet.functional.wallet.calculateWalletExpenseWithAccountFilters
-import com.ivy.wallet.functional.wallet.calculateWalletIncomeWithAccountFilters
-import com.ivy.wallet.logic.currency.ExchangeRatesLogic
-import com.ivy.wallet.logic.currency.sumInBaseCurrency
-import com.ivy.wallet.model.TransactionType
-import com.ivy.wallet.model.entity.Category
+import com.ivy.wallet.functional.wallet.history
 import com.ivy.wallet.model.entity.Transaction
-import com.ivy.wallet.persistence.dao.CategoryDao
 import com.ivy.wallet.persistence.dao.SettingsDao
 import com.ivy.wallet.persistence.dao.TransactionDao
 import com.ivy.wallet.ui.AIAnalysisChat
 import com.ivy.wallet.ui.IvyWalletCtx
-import com.ivy.wallet.ui.PieChartStatistic
+import com.ivy.wallet.ui.home.ChatMessageEntity
+import com.ivy.wallet.ui.home.ChatMessageType
 import com.ivy.wallet.ui.home.ChatUiState
-import com.ivy.wallet.ui.onboarding.model.FromToTimeRange
 import com.ivy.wallet.ui.onboarding.model.TimePeriod
 import com.ivy.wallet.ui.onboarding.model.toCloseTimeRange
-import com.ivy.wallet.ui.statistic.level1.CategoryAmount
-import com.ivy.wallet.ui.statistic.level1.SelectedCategory
+import com.ivy.wallet.ui.theme.modal.model.OpenAiPrompt
+import com.ivy.wallet.ui.vibratePhone
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.*
+import timber.log.Timber
 import javax.inject.Inject
-import kotlin.math.absoluteValue
+
+object OpenAiScreenPrompt {
+    val systemPrompt =
+        "You are Bucket Money AI, a highly personalized and knowledgeable financial advisor. Your role is to provide tailored financial advice, insights, and overviews based strictly on the user’s provided transactions. Focus on analyzing these transactions to identify spending patterns, potential savings, and budget adjustments. Avoid suggesting external tools or apps unless explicitly requested by the user. Ensure your responses are clear, concise, and actionable, helping users to optimize their spending, identify savings opportunities, and achieve their financial goals while considering their unique financial situation."
+    val userPrompt =
+        "Attached is a list of my recent transactions. Based strictly on this information, please answer the question provided it is related to financial advice, insights, and overviews or any analysis and questions about the transactions. Here is the question: "
+}
 
 @HiltViewModel
 class AIAnalysisChatViewModel @Inject constructor(
-    private val walletDAOs: WalletDAOs,
-    private val categoryDao: CategoryDao,
     private val settingsDao: SettingsDao,
     private val transactionDao: TransactionDao,
-    private val exchangeRatesLogic: ExchangeRatesLogic,
-    private val ivyContext: IvyWalletCtx
+    private val ivyContext: IvyWalletCtx,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
+    val TAG = "AiAnalysisChatViewModel"
+    val TEMPERATURE = 0.2
+    val MAX_TOKENS = 600
+    val FREQUENCY_PENALTY = 0.5
+    val PRESENCE_PENALTY = 0.5
+
+
     private val _chatUiState = MutableStateFlow(ChatUiState())
     val chatUiState: StateFlow<ChatUiState> = _chatUiState.asStateFlow()
+
+    private val _chatHistory = MutableStateFlow<MutableList<ChatMessageEntity>>(mutableListOf())
+    val chatHistory: StateFlow<List<ChatMessageEntity>> = _chatHistory.asStateFlow()
 
     private val _period = MutableStateFlow(ivyContext.selectedPeriod)
     val period = _period.readOnly()
 
-    private val _type = MutableStateFlow(TransactionType.EXPENSE)
-    val type = _type.readOnly()
 
     private val _baseCurrencyCode = MutableStateFlow("")
     val baseCurrencyCode = _baseCurrencyCode.readOnly()
-
-    private val _totalAmount = MutableStateFlow(0.0)
-    val totalAmount = _totalAmount.readOnly()
-
-    private val _categoryAmounts = MutableStateFlow<List<CategoryAmount>>(emptyList())
-    val categoryAmounts = _categoryAmounts.readOnly()
-
-    private val _selectedCategory = MutableStateFlow<SelectedCategory?>(null)
-    val selectedCategory = _selectedCategory.readOnly()
-
-    private val _accountFilterList = MutableStateFlow<List<UUID>>(emptyList())
-    val accountIdFilterList = _accountFilterList.readOnly()
 
     private val _showCloseButtonOnly = MutableStateFlow(false)
     val showCloseButtonOnly = _showCloseButtonOnly.readOnly()
@@ -80,188 +79,79 @@ class AIAnalysisChatViewModel @Inject constructor(
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
     val transaction = _transactions.readOnly()
 
-    private var filterExcluded = true
+    private var aiResponseJob: Job? = null
+
 
     fun start(
         screen: AIAnalysisChat
     ) {
         if (screen.previousAiAnalysis.isNotNullOrBlank()) {
-            _chatUiState.value = ChatUiState(
-                loading = false,
-                aiInsights = screen.previousAiAnalysis
+            _chatHistory.value = mutableListOf(
+                ChatMessageEntity(
+                    content = screen.previousAiAnalysis,
+                    type = ChatMessageType.RECEIVED
+                )
             )
-
+        } else {
+            resetChat()
         }
-    }
 
-    private fun initPieChartNormally(
-        period: TimePeriod,
-        type: TransactionType,
-        accountList: List<UUID>,
-        filterExcluded: Boolean
-    ) {
-        _showCloseButtonOnly.value = false
-        _accountFilterList.value = accountList
-        this.filterExcluded = filterExcluded
-        _transactions.value = emptyList()
-
-        load(
-            period = period,
-            type = type,
-            accountFilterList = accountList
+        initChatScreen(
+            period = ivyContext.selectedPeriod
         )
     }
 
-    private fun initPieChartFormTransactions(
+    private fun initChatScreen(
         period: TimePeriod,
-        type: TransactionType,
-        accountFilterList: List<UUID>,
-        filterExclude: Boolean,
-        transactions: List<Transaction>
     ) {
-        viewModelScope.launch(Dispatchers.Default) {
-            _showCloseButtonOnly.value = true
-            _accountFilterList.value = accountFilterList
-            _baseCurrencyCode.value = ioThread { settingsDao.findFirst() }.currency
-            _transactions.value = transactions
-            filterExcluded = filterExclude
+        _showCloseButtonOnly.value = false
 
-            val catAmounts = scopedIOThread { scope ->
-                transactions.groupBy { it.categoryId }.map { mapEntry ->
-                    scope.async {
-                        val category =
-                            if (mapEntry.key == null) null else categoryDao.findById(mapEntry.key!!)
-
-                        val amount = mapEntry.value.filter { it.type == type }.sumInBaseCurrency(
-                            exchangeRatesLogic = exchangeRatesLogic,
-                            settingsDao = settingsDao,
-                            accountDao = walletDAOs.accountDao
-                        )
-
-                        CategoryAmount(category, amount)
-                    }
-                }.awaitAll().sortedByDescending { it.amount }
-            }
-
-            _totalAmount.value = catAmounts.sumOf { it.amount }
-            _categoryAmounts.value = catAmounts
-        }
+        load(
+            period = period,
+        )
     }
+
 
     private fun load(
         period: TimePeriod,
-        type: TransactionType,
-        accountFilterList: List<UUID>
     ) {
+        TestIdlingResource.increment()
 
         _period.value = period
         val range = period.toRange(ivyContext.startDayOfMonth)
-        _type.value = type
-
-        _selectedCategory.value = null
 
         viewModelScope.launch {
             val settings = ioThread { settingsDao.findFirst() }
-
             _baseCurrencyCode.value = settings.currency
-
-            _totalAmount.value = ioThread {
-                when (type) {
-                    TransactionType.INCOME -> {
-                        calculateWalletIncomeWithAccountFilters(
-                            walletDAOs = walletDAOs,
-                            baseCurrencyCode = baseCurrencyCode.value,
-                            range = range.toCloseTimeRange(),
-                            accountIdFilterList = accountFilterList,
-                            filterExcluded = filterExcluded
-                        ).value.toDouble()
-                    }
-
-                    TransactionType.EXPENSE -> {
-                        calculateWalletExpenseWithAccountFilters(
-                            walletDAOs = walletDAOs,
-                            baseCurrencyCode = baseCurrencyCode.value,
-                            range = range.toCloseTimeRange(),
-                            accountIdFilterList = accountFilterList,
-                            filterExcluded = filterExcluded
-                        ).value.toDouble()
-                    }
-
-                    else -> error("not supported transactionType - $type")
-                }
-            }.absoluteValue
-
-            _categoryAmounts.value = scopedIOThread { scope ->
-
-                val categories =
-                    getCategories(
-                        fetchCategoriesFromTransactions = accountFilterList.isNotEmpty(),
-                        timeRange = range
-                    )
-
-                categories
-                    .plus(null) //for unspecified
-                    .map { category ->
-                        CategoryAmount(
-                            category = category,
-                            amount = when (type) {
-                                TransactionType.INCOME -> {
-                                    calculateCategoryIncomeWithAccountFilters(
-                                        walletDAOs = walletDAOs,
-                                        baseCurrencyCode = baseCurrencyCode.value,
-                                        categoryId = category?.id,
-                                        accountIdFilterList = accountFilterList,
-                                        range = range.toCloseTimeRange()
-                                    ).toDouble()
-                                }
-
-                                TransactionType.EXPENSE -> {
-                                    calculateCategoryExpenseWithAccountFilters(
-                                        walletDAOs = walletDAOs,
-                                        baseCurrencyCode = baseCurrencyCode.value,
-                                        categoryId = category?.id,
-                                        accountIdList = accountFilterList,
-                                        range = range.toCloseTimeRange()
-                                    ).toDouble()
-                                }
-
-                                else -> error("not supported transactionType - $type")
-                            }
-                        )
-                    }
-                    .sortedByDescending { it.amount }
+            _transactions.value = ioThread {
+                history(
+                    transactionDao = transactionDao,
+                    range = range.toCloseTimeRange()
+                )
             }
         }
+
+        TestIdlingResource.decrement()
     }
 
-    fun setSelectedCategory(selectedCategory: SelectedCategory?) {
-        _selectedCategory.value = selectedCategory
-
-        val categoryAmounts = _categoryAmounts.value
-        _categoryAmounts.value = if (selectedCategory != null) {
-            categoryAmounts
-                .sortedByDescending { it.amount }
-                .sortedByDescending {
-                    selectedCategory.category == it.category
-                }
-        } else {
-            categoryAmounts.sortedByDescending {
-                it.amount
-            }
-        }
-    }
 
     fun resetChat() {
-        // reset chat
+        _chatHistory.value = mutableListOf(
+            ChatMessageEntity(
+                content = "Hi, Bucket Money Ai. I can help you analyze your expenses and income. What would you like to know?",
+                type = ChatMessageType.RECEIVED
+            )
+        )
+        _chatUiState.value = ChatUiState()
     }
 
     fun onSetPeriod(period: TimePeriod) {
         ivyContext.updateSelectedPeriodInMemory(period)
         load(
             period = period,
-            type = type.value,
-            accountFilterList = accountIdFilterList.value
         )
+        resetChat()
+
     }
 
     fun nextMonth() {
@@ -270,10 +160,11 @@ class AIAnalysisChatViewModel @Inject constructor(
         if (month != null) {
             load(
                 period = month.incrementMonthPeriod(ivyContext, 1L, year),
-                type = type.value,
-                accountFilterList = accountIdFilterList.value
             )
+            resetChat()
+
         }
+
     }
 
     fun previousMonth() {
@@ -281,28 +172,175 @@ class AIAnalysisChatViewModel @Inject constructor(
         val year = period.value.year ?: dateNowUTC().year
         if (month != null) {
             load(
-                period = month.incrementMonthPeriod(ivyContext, -1L, year),
-                type = type.value,
-                accountFilterList = accountIdFilterList.value
+                period = month.incrementMonthPeriod(ivyContext, -1L, year)
             )
+            resetChat()
+
         }
     }
 
-    private suspend fun getCategories(
-        fetchCategoriesFromTransactions: Boolean,
-        timeRange: FromToTimeRange
-    ): List<Category> {
-        return scopedIOThread { scope ->
-            if (fetchCategoriesFromTransactions) {
-                transactionDao.findAllBetween(timeRange.from(), timeRange.to()).filter {
-                    it.categoryId != null
-                }.map {
-                    scope.async {
-                        categoryDao.findById(it.categoryId!!)
-                    }
-                }.awaitAll().filterNotNull().distinctBy { it.id }
-            } else
-                categoryDao.findAll()
-        }
+    fun onUserPromptChanged(prompt: String) {
+        _chatUiState.value = _chatUiState.value.copy(
+            userInput = prompt
+        )
     }
+
+
+    fun getCompletion() {
+        aiResponseJob = viewModelScope.launch {
+            val userInput = ChatMessageEntity(
+                content = _chatUiState.value.userInput,
+                type = ChatMessageType.SENT
+
+            ) // must be initialised before loading starts else will cause issue in chat screen when reading last or null value
+            _chatHistory.value = _chatHistory.value.apply {
+                add(userInput)
+            }
+
+            _chatUiState.value = _chatUiState.value.copy(
+                loading = true,
+                error = "",
+                transactionsString = "",
+                aiInsights = "",
+                userInput = _chatUiState.value.userInput
+            )
+            Timber.tag(TAG).d("getCompletion: ${_chatUiState.value.transactionsString}")
+            val previousMessages: MutableList<ChatMessageEntity> = mutableListOf()
+
+            _transactions.value.forEachIndexed { index, transactionItem ->
+                val transactionString = "$index.${transactionItem.toChatGptPrompt()}"
+                Timber.tag(TAG).d("transactionString: $transactionString")
+                _chatUiState.value = _chatUiState.value.copy(
+                    transactionsString = _chatUiState.value.transactionsString + transactionString
+                )
+                previousMessages.add(
+                    ChatMessageEntity(
+                        content = transactionString,
+                        type = ChatMessageType.SENT
+                    )
+                )
+
+            }
+
+            if (_chatUiState.value.transactionsString.isNullOrEmpty()) {
+                _chatUiState.value = _chatUiState.value.copy(
+                    loading = false,
+                )
+                Timber.tag(TAG).d("No transactions available. return")
+
+                val serverResponse = ChatMessageEntity(
+                    content = "No transactions found for selected period (${_period.value.toDisplayLong(ivyContext.startDayOfMonth)}). Please select another period with transactions to get insights.",
+                    type = ChatMessageType.RECEIVED
+                )
+
+                _chatHistory.value = _chatHistory.value.apply {
+                    add(serverResponse)
+                }
+                return@launch
+            }
+
+            val chatMessageContext: MutableList<ChatMessage> = mutableListOf()
+
+            var totalCharCount = 0
+
+            previousMessages.forEach { chatMessageEntity ->
+                totalCharCount += chatMessageEntity.content.length
+                if (totalCharCount > 3000) {
+                    return@forEach
+                }
+                chatMessageContext.add(
+                    ChatMessage(
+                        role = ChatRole.User,
+                        content = chatMessageEntity.content
+                    )
+                )
+            }
+
+//            Timber.tag(TAG).d(chatMessageContext.toString())
+
+
+            val extraPromptDetails = "Currency - ${baseCurrencyCode.value}."
+
+            val openAI = OpenAI(Constants.OPEN_AI_API_KEY)
+            val chatCompletionRequest = ChatCompletionRequest(
+                model = ModelId("gpt-3.5-turbo"),
+                messages = listOf(
+                    ChatMessage(
+                        role = ChatRole.System,
+                        content = OpenAiScreenPrompt.systemPrompt
+                    ),
+                    *chatMessageContext.toTypedArray(),
+                    ChatMessage(
+                        role = ChatRole.User,
+                        content = extraPromptDetails + OpenAiScreenPrompt.userPrompt + _chatUiState.value.userInput
+                    )
+                ),
+                temperature = TEMPERATURE,
+                maxTokens = MAX_TOKENS,
+                topP = 1.0,
+                frequencyPenalty = FREQUENCY_PENALTY,
+                presencePenalty = PRESENCE_PENALTY,
+            )
+
+
+            try {
+                val completions: Flow<ChatCompletionChunk> =
+                    openAI.chatCompletions(chatCompletionRequest)
+
+
+
+                completions.collect { completionChunk ->
+                    val response = completionChunk.choices[0].delta.content
+//                    Timber.tag(TAG).d("response: $response")
+                    response?.let {
+                        _chatUiState.value = _chatUiState.value.copy(
+                            aiInsights = _chatUiState.value.aiInsights + it,
+                            userInput = ""
+                        )
+
+
+                    }
+                    context.vibratePhone(
+                        amplitude = 10
+                    )
+                }
+//                Timber.tag(TAG).d("Done with completion")
+                _chatUiState.value = _chatUiState.value.copy(loading = false, error = "")
+                val serverResponse = ChatMessageEntity(
+                    content = _chatUiState.value.aiInsights ?: "",
+                    type = ChatMessageType.RECEIVED
+                )
+
+                _chatHistory.value = _chatHistory.value.apply {
+                    add(serverResponse)
+                }
+
+
+            } catch (e: Exception) {
+                Timber.tag(TAG).e(e)
+                _chatUiState.value = _chatUiState.value.copy(
+                    error = "Oops! Bucket Money AI had an issue connecting and can't provide insights right now. Remember, as Warren Buffett said, 'Do not save what is left after spending, but spend what is left after saving.' Stay tuned for updates!",
+                    loading = false
+                )
+                val serverResponse = ChatMessageEntity(
+                    content = "There was an issue connecting to the servers.",
+                    type = ChatMessageType.RECEIVED
+                )
+
+                _chatHistory.value = _chatHistory.value.apply {
+                    add(serverResponse)
+                }
+
+            }
+
+        }
+
+    }
+
+
+    fun cancelAiResponseJob() {
+        aiResponseJob?.cancel()
+    }
+
+
 }

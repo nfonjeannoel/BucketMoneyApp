@@ -42,13 +42,14 @@
             android:exported="true"
             android:name=".ui.IvyActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
+                android:windowSoftInputMode="adjustPan"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+<!--        adjustResize|stateAlwaysHidden|adjustPan-->
         <!-- It fixes HiltWorker injection for newer WorkManager versions -->
         <provider
             android:name="androidx.startup.InitializationProvider"

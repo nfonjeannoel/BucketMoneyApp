@@ -59,7 +59,8 @@ data class ChatUiState(
     val transactionsString: String? = null,
     val aiInsights: String? = null,
     val loading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val userInput: String = ""
 )
 
 data class ChatMessageEntity(

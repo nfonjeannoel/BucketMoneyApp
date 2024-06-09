@@ -30,6 +30,7 @@ fun BmBasicTextField(
     value: TextFieldValue,
     textColor: Color = UI.colors.pureInverse,
     hint: String?,
+    maxLines: Int = 3,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions(
         autoCorrect = true,
@@ -73,6 +74,7 @@ fun BmBasicTextField(
             cursorBrush = SolidColor(UI.colors.pureInverse),
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
+            maxLines = maxLines,
             keyboardActions = keyboardActions ?: KeyboardActions(
                 onDone = {
                     hideKeyboard(view)
