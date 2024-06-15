@@ -54,6 +54,7 @@ fun BoxWithConstraintsScope.SettingsScreen(screen: Settings) {
     val currencyCode by viewModel.currencyCode.observeAsState("")
     val lockApp by viewModel.lockApp.observeAsState(false)
     val showNotifications by viewModel.showNotifications.collectAsState()
+    val showIncomingNotifications by viewModel.showIncomingNotifications.collectAsState()
     val startDateOfMonth by viewModel.startDateOfMonth.observeAsState(1)
     val progressState by viewModel.progressState.collectAsState()
 
@@ -71,6 +72,7 @@ fun BoxWithConstraintsScope.SettingsScreen(screen: Settings) {
         opSync = opSync,
         lockApp = lockApp,
         showNotifications = showNotifications,
+        showIncomingNotifications = showIncomingNotifications,
         progressState = progressState,
 
         nameLocalAccount = nameLocalAccount,
@@ -91,6 +93,7 @@ fun BoxWithConstraintsScope.SettingsScreen(screen: Settings) {
         },
         onSetLockApp = viewModel::setLockApp,
         onSetShowNotifications = viewModel::setShowNotifications,
+        onSetShowIncomingNotifications = viewModel::setShowIncomingNotifications,
         onSetStartDateOfMonth = viewModel::setStartDateOfMonth,
         onRequestFeature = { title, body ->
             viewModel.requestFeature(
@@ -113,6 +116,7 @@ private fun BoxWithConstraintsScope.UI(
 
     lockApp: Boolean,
     showNotifications: Boolean = true,
+    showIncomingNotifications: Boolean = true,
     progressState: Boolean = false,
 
     nameLocalAccount: String?,
@@ -129,6 +133,7 @@ private fun BoxWithConstraintsScope.UI(
     onExportToCSV: () -> Unit = {},
     onSetLockApp: (Boolean) -> Unit = {},
     onSetShowNotifications: (Boolean) -> Unit = {},
+    onSetShowIncomingNotifications: (Boolean) -> Unit = {},
     onSetStartDateOfMonth: (Int) -> Unit = {},
     onRequestFeature: (String, String) -> Unit = { _, _ -> },
     onDeleteAllUserData: () -> Unit = {},
@@ -285,6 +290,13 @@ private fun BoxWithConstraintsScope.UI(
                 lockApp = showNotifications,
                 onSetLockApp = onSetShowNotifications,
                 text = "Show notifications",
+                icon = R.drawable.ic_notification_m
+            )
+
+            AppSwitch(
+                lockApp = showIncomingNotifications,
+                onSetLockApp = onSetShowIncomingNotifications,
+                text = "Incoming Transaction Alerts",
                 icon = R.drawable.ic_notification_m
             )
 

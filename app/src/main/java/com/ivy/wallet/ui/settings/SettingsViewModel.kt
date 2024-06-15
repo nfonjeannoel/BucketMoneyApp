@@ -69,6 +69,9 @@ class SettingsViewModel @Inject constructor(
     private val _showNotifications = MutableStateFlow(true)
     val showNotifications = _showNotifications.asStateFlow()
 
+    private val _showIncomingNotifications = MutableStateFlow(true)
+    val showIncomingNotifications = _showIncomingNotifications.asStateFlow()
+
     private val _progressState = MutableStateFlow(false)
     val progressState = _progressState.asStateFlow()
 
@@ -157,7 +160,7 @@ class SettingsViewModel @Inject constructor(
 
     fun exportToCSV(context: Context) {
         ivyContext.createNewFile(
-            "Ivy Wallet (${
+            "Bucket Money (${
                 timeNowUTC().formatNicelyWithTime(noWeekDay = true)
             }).csv"
         ) { fileUri ->
@@ -290,6 +293,17 @@ class SettingsViewModel @Inject constructor(
 
             sharedPrefs.putBoolean(SharedPrefs.SHOW_NOTIFICATIONS, showNotifications)
             _showNotifications.value = showNotifications
+
+            TestIdlingResource.decrement()
+        }
+    }
+
+    fun setShowIncomingNotifications(showIncomingNotifications: Boolean) {
+        viewModelScope.launch {
+            TestIdlingResource.increment()
+
+            sharedPrefs.putBoolean(SharedPrefs.SHOW_INCOMING_NOTIFICATIONS, showIncomingNotifications)
+            _showIncomingNotifications.value = showIncomingNotifications
 
             TestIdlingResource.decrement()
         }
