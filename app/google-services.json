@@ -1,79 +1,41 @@
 {
   "project_info": {
-    "project_number": "364763737033",
-    "firebase_url": "https://ivy-widget.firebaseio.com",
-    "project_id": "ivy-widget",
-    "storage_bucket": "ivy-widget.appspot.com"
+    "project_number": "1016546210568",
+    "project_id": "bucket-money-54efa",
+    "storage_bucket": "bucket-money-54efa.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:364763737033:android:634d1eb97e9254b3bc5618",
+        "mobilesdk_app_id": "1:1016546210568:android:470600ec256fb6bcf2f2bd",
         "android_client_info": {
           "package_name": "com.ivy.wallet"
         }
       },
       "oauth_client": [
         {
-          "client_id": "364763737033-k9vbsfmeou12rscq134lclc7sbr0608e.apps.googleusercontent.com",
+          "client_id": "1016546210568-oi8b1udevh8jsfpsfjoi9umok19o2bt4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.ivy.wallet",
-            "certificate_hash": "f9b8505c2740756c704f8782b6fc3ddcaaea3d80"
-          }
-        },
-        {
-          "client_id": "364763737033-t1d2qe7s0s8597k7anu3sb2nq79ot5tp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyB4FVF29Qu17MhHmf-55l7l7W09hiMQuJM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "364763737033-8f0ta4r3t5cjmavkhmdnjcufpcg6ror6.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:364763737033:android:7e379f986cb86320bc5618",
-        "android_client_info": {
-          "package_name": "com.ivy.wallet.debug"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "364763737033-ktnhou2u7q3num6aj02jj0v11dnp5imi.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.ivy.wallet.debug",
             "certificate_hash": "962730459b106b8aa8fb225430deb6a97c559699"
           }
         },
         {
-          "client_id": "364763737033-t1d2qe7s0s8597k7anu3sb2nq79ot5tp.apps.googleusercontent.com",
+          "client_id": "1016546210568-mm4urj4augbnvvr7elqsnvig2h2j6bv3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB4FVF29Qu17MhHmf-55l7l7W09hiMQuJM"
+          "current_key": "AIzaSyDDCB9FMt16jzeLG4gpFrvjngsPlvq_s08"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "364763737033-8f0ta4r3t5cjmavkhmdnjcufpcg6ror6.apps.googleusercontent.com",
+              "client_id": "1016546210568-mm4urj4augbnvvr7elqsnvig2h2j6bv3.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -195,7 +195,7 @@ class HomeViewModel @Inject constructor(
             //This method is used to restore the theme when user imports locally backed up data
             loadNewTheme()
 
-            _name.value = settings.name
+            _name.value = settings.name.split(" ").first()
             _baseCurrencyCode.value = settings.currency
 
             _categories.value = ioThread { categoryDao.findAll() }

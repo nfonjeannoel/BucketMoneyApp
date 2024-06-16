@@ -21,6 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -645,6 +648,7 @@ private fun AccountCard(
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun AccountCardUser(
     localName: String?,
@@ -661,11 +665,11 @@ private fun AccountCardUser(
         Spacer(Modifier.width(24.dp))
 
         if (user.profilePicture != null) {
-            Image(
+            AsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(32.dp),
-                painter = rememberCoilPainter(request = user.profilePicture),
+                model = user.profilePicture,
                 contentScale = ContentScale.FillBounds,
                 contentDescription = "profile picture"
             )

@@ -108,6 +108,7 @@ class SettingsViewModel @Inject constructor(
     fun sync() {
         viewModelScope.launch {
             TestIdlingResource.increment()
+            return@launch
 
             _opSync.value = OpResult.loading()
 

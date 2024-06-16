@@ -304,6 +304,9 @@ fun DependencyHandler.ThirdParty() {
 
     // markdown
     implementation("com.github.jeziellago:compose-markdown:0.5.0")
+
+    // coil-compose
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }
 
 fun DependencyHandler.FunctionalProgramming(

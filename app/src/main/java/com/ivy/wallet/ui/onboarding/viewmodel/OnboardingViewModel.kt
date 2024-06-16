@@ -1,13 +1,15 @@
 package com.ivy.wallet.ui.onboarding.viewmodel
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.ivy.design.l0_system.Theme
 import com.ivy.design.navigation.Navigation
-import com.ivy.wallet.R
 import com.ivy.wallet.analytics.IvyAnalytics
 import com.ivy.wallet.base.*
 import com.ivy.wallet.logic.*
@@ -15,12 +17,15 @@ import com.ivy.wallet.logic.currency.ExchangeRatesLogic
 import com.ivy.wallet.logic.model.CreateAccountData
 import com.ivy.wallet.logic.model.CreateCategoryData
 import com.ivy.wallet.logic.notification.TransactionReminderLogic
+import com.ivy.wallet.model.AuthProviderType
 import com.ivy.wallet.model.IvyCurrency
 import com.ivy.wallet.model.entity.Account
 import com.ivy.wallet.model.entity.Category
 import com.ivy.wallet.model.entity.Settings
+import com.ivy.wallet.model.entity.User
 import com.ivy.wallet.network.FCMClient
 import com.ivy.wallet.network.RestClient
+import com.ivy.wallet.network.request.auth.AuthResponse
 import com.ivy.wallet.network.request.auth.GoogleSignInRequest
 import com.ivy.wallet.persistence.SharedPrefs
 import com.ivy.wallet.persistence.dao.AccountDao
@@ -34,8 +39,10 @@ import com.ivy.wallet.ui.onboarding.OnboardingState
 import com.ivy.wallet.ui.onboarding.model.AccountBalance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,6 +69,19 @@ class OnboardingViewModel @Inject constructor(
     exchangeRatesLogic: ExchangeRatesLogic,
     logoutLogic: LogoutLogic
 ) : ViewModel() {
+    companion object {
+        const val RC_SIGN_IN = 9001
+    }
+
+    val googleSignInClient: GoogleSignInClient by lazy {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("1016546210568-mm4urj4augbnvvr7elqsnvig2h2j6bv3.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+
+        GoogleSignIn.getClient(appContext, gso)
+    }
+
 
     private val _state = MutableLiveData(OnboardingState.SPLASH)
     val state = _state.asLiveData()
@@ -149,10 +169,13 @@ class OnboardingViewModel @Inject constructor(
 
     //Step 1 ---------------------------------------------------------------------------------------
     fun loginWithGoogle() {
-        // implement custom backend
-        _opGoogleSignIn.value =
-            OpResult.faliure(appContext.getString(R.string.failed_to_connect_to_server))
+//        val signInIntent = googleSignInClient.signInIntent
+        _opGoogleSignIn.value = OpResult.loading()
         return
+//        // implement custom backend
+//        _opGoogleSignIn.value =
+//            OpResult.faliure(appContext.getString(R.string.failed_to_connect_to_server))
+//        return
         ivyContext.googleSignIn { idToken ->
             if (idToken != null) {
                 _opGoogleSignIn.value = OpResult.loading()
@@ -182,6 +205,48 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
+    fun loginWithGoogleNew(account: GoogleSignInAccount?) {
+        TestIdlingResource.increment()
+        viewModelScope.launch {
+//            session.initiate(authResponse)
+            Timber.d("Login with Google successful ${account?.email} ${account?.displayName}" )
+
+            saveUser(account)
+
+
+            _opGoogleSignIn.value = OpResult.success(Unit)
+            router.googleLoginNext()
+        }
+
+
+
+        _opGoogleSignIn.value = null
+
+        TestIdlingResource.decrement()
+    }
+
+    private suspend fun saveUser(account: GoogleSignInAccount?) {
+        val user = User(
+            email = account?.email ?: "",
+            authProviderType = AuthProviderType.GOOGLE,
+            firstName = account?.givenName ?: "",
+            lastName = account?.familyName,
+            profilePicture = account?.photoUrl?.toString(),
+            color = 0,
+            testUser = false,
+            id = UUID.randomUUID()
+        )
+
+        ioThread {
+            session.initiate(AuthResponse(user, ""))
+            settingsDao.save(
+                settingsDao.findFirst().copy(
+                    name = account?.displayName ?: account?.familyName ?: account?.givenName ?: ""
+                )
+            )
+        }
+    }
+
     private suspend fun loginWithGoogleOnServer(idToken: String) {
         TestIdlingResource.increment()
 
@@ -191,6 +256,18 @@ class OnboardingViewModel @Inject constructor(
                 fcmToken = fcmClient.fcmToken()
             )
         )
+
+//        val signInRequest = BeginSignInRequest.builder()
+//            .setGoogleIdTokenRequestOptions(
+//                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+//                    .setSupported(true)
+//                    // Your server's client ID, not your Android client ID.
+//                    .setServerClientId("1016546210568-mm4urj4augbnvvr7elqsnvig2h2j6bv3.apps.googleusercontent.com")
+//                    // Only show accounts previously used to sign in.
+//                    .setFilterByAuthorizedAccounts(true)
+//                    .build()
+//            )
+//            .build()
 
         ioThread {
             session.initiate(authResponse)

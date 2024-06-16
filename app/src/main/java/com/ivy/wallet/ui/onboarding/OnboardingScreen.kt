@@ -1,13 +1,20 @@
 package com.ivy.wallet.ui.onboarding
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import com.ivy.wallet.base.OpResult
 import com.ivy.wallet.base.onScreenStart
 import com.ivy.wallet.logic.model.CreateAccountData
@@ -21,9 +28,11 @@ import com.ivy.wallet.ui.onboarding.model.AccountBalance
 import com.ivy.wallet.ui.onboarding.steps.*
 import com.ivy.wallet.ui.onboarding.viewmodel.OnboardingViewModel
 
+
 @ExperimentalFoundationApi
 @Composable
 fun BoxWithConstraintsScope.OnboardingScreen(screen: Onboarding) {
+
     val viewModel: OnboardingViewModel = viewModel()
 
     val state by viewModel.state.observeAsState(OnboardingState.SPLASH)
@@ -43,6 +52,36 @@ fun BoxWithConstraintsScope.OnboardingScreen(screen: Onboarding) {
             isSystemDarkMode = isSystemDarkTheme
         )
     }
+    val context = LocalContext.current
+    val signInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                // Pass the account to the ViewModel
+                viewModel.loginWithGoogleNew(account)
+            } catch (e: ApiException) {
+                // Handle sign-in failure
+            }
+        }
+    }
+
+
+    LaunchedEffect(opGoogleSign) {
+        opGoogleSign?.let {
+            if (context is Activity && it is OpResult.Loading) {
+                signInLauncher.launch(viewModel.googleSignInClient.signInIntent)
+
+//                context.startActivityForResult(
+//                    viewModel.googleSignInClient.signInIntent,
+//                    OnboardingViewModel.RC_SIGN_IN
+//                )
+            }
+        }
+    }
+
 
     UI(
         onboardingState = state,
@@ -116,18 +155,21 @@ private fun BoxWithConstraintsScope.UI(
                 onSkip = onSkip
             )
         }
+
         OnboardingState.CHOOSE_PATH -> {
             OnboardingType(
                 onStartImport = onStartImport,
                 onStartFresh = onStartFresh
             )
         }
+
         OnboardingState.CURRENCY -> {
             OnboardingSetCurrency(
                 preselectedCurrency = currency,
                 onSetCurrency = onSetCurrency
             )
         }
+
         OnboardingState.ACCOUNTS -> {
             OnboardingAccounts(
                 baseCurrency = currency.code,
@@ -141,6 +183,7 @@ private fun BoxWithConstraintsScope.UI(
                 onSkip = onAddAccountsSkip
             )
         }
+
         OnboardingState.CATEGORIES -> {
             OnboardingCategories(
                 suggestions = categorySuggestions,
