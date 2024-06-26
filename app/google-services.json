@@ -41,6 +41,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016546210568:android:470600ec256fb6bcf2f2bd",
+        "android_client_info": {
+          "package_name": "com.ivy.wallet.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016546210568-oi8b1udevh8jsfpsfjoi9umok19o2bt4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ivy.wallet.debug",
+            "certificate_hash": "962730459b106b8aa8fb225430deb6a97c559699"
+          }
+        },
+        {
+          "client_id": "1016546210568-mm4urj4augbnvvr7elqsnvig2h2j6bv3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDCB9FMt16jzeLG4gpFrvjngsPlvq_s08"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016546210568-mm4urj4augbnvvr7elqsnvig2h2j6bv3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

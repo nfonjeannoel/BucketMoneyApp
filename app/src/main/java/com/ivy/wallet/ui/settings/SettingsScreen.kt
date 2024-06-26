@@ -1,5 +1,9 @@
 package com.ivy.wallet.ui.settings
 
+import android.app.Activity
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -27,6 +31,8 @@ import coil.compose.rememberImagePainter
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import com.ivy.design.api.navigation
 import com.ivy.design.l0_system.UI
 import com.ivy.design.l0_system.style
@@ -45,6 +51,7 @@ import com.ivy.wallet.ui.theme.components.IvyIcon
 import com.ivy.wallet.ui.theme.components.IvySwitch
 import com.ivy.wallet.ui.theme.components.IvyToolbar
 import com.ivy.wallet.ui.theme.modal.*
+import timber.log.Timber
 import java.util.*
 
 @ExperimentalFoundationApi
@@ -69,6 +76,24 @@ fun BoxWithConstraintsScope.SettingsScreen(screen: Settings) {
 
     val ivyActivity = LocalContext.current as IvyActivity
     val context = LocalContext.current
+
+    val signInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                // Pass the account to the ViewModel
+                viewModel.loginWithGoogleNew(account)
+            } catch (e: ApiException) {
+                // Handle sign-in failure
+                Timber.tag("SettingsScreen").d(e, "Google sign in failed")
+            }
+        }
+    }
+
+
     UI(
         user = user,
         currencyCode = currencyCode,
@@ -87,7 +112,9 @@ fun BoxWithConstraintsScope.SettingsScreen(screen: Settings) {
 
         onSync = viewModel::sync,
         onLogout = viewModel::logout,
-        onLogin = viewModel::login,
+        onLogin = {
+            signInLauncher.launch(viewModel.googleSignInClient.signInIntent)
+        },
         onBackupData = {
             viewModel.exportToZip(context)
         },

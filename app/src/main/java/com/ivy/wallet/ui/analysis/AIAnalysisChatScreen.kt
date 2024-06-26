@@ -30,6 +30,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
@@ -87,6 +88,7 @@ import com.ivy.wallet.ui.theme.components.*
 import com.ivy.wallet.ui.theme.modal.ChoosePeriodModal
 import com.ivy.wallet.ui.theme.modal.ChoosePeriodModalData
 import com.ivy.wallet.ui.theme.wallet.AmountCurrencyB1Row
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -382,7 +384,13 @@ fun MessagesSection(
                                     fontWeight = FontWeight.Bold,
                                 )
 //                Divider()
-                                Text(text = chatUiState.aiInsights ?: "...")
+                                MarkdownText(
+                                    markdown =chatUiState.aiInsights ?: "...",
+                                    style = LocalTextStyle.current
+                                        .style(UI.colors.pureInverse),
+
+                                    )
+//                                Text(text = chatUiState.aiInsights ?: "...")
 
 
                             }
@@ -440,6 +448,7 @@ fun MessageCard(
             Column(
                 modifier = Modifier.padding(start = 8.dp)
             ) {
+
                 Text(
                     text = when (chatMessage.type) {
                         ChatMessageType.SENT -> "You"
@@ -451,8 +460,15 @@ fun MessageCard(
                     ),
                     fontWeight = FontWeight.Bold,
                 )
+
+                MarkdownText(
+                    markdown =chatMessage.content,
+                    style = LocalTextStyle.current
+                        .style(UI.colors.pureInverse),
+
+                    )
 //                Divider()
-                Text(text = chatMessage.content)
+//                Text(text = chatMessage.content)
 
 
             }

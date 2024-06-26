@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.ivy.design.navigation.Navigation
 import com.ivy.wallet.analytics.IvyAnalytics
 import com.ivy.wallet.base.*
@@ -11,10 +15,12 @@ import com.ivy.wallet.logic.LogoutLogic
 import com.ivy.wallet.logic.csv.ExportCSVLogic
 import com.ivy.wallet.logic.currency.ExchangeRatesLogic
 import com.ivy.wallet.logic.zip.ExportZipLogic
+import com.ivy.wallet.model.AuthProviderType
 import com.ivy.wallet.model.analytics.AnalyticsEvent
 import com.ivy.wallet.model.entity.User
 import com.ivy.wallet.network.FCMClient
 import com.ivy.wallet.network.RestClient
+import com.ivy.wallet.network.request.auth.AuthResponse
 import com.ivy.wallet.network.request.auth.GoogleSignInRequest
 import com.ivy.wallet.network.request.github.OpenIssueRequest
 import com.ivy.wallet.persistence.SharedPrefs
@@ -26,11 +32,13 @@ import com.ivy.wallet.ui.AIAnalysisChat
 import com.ivy.wallet.ui.IvyActivity
 import com.ivy.wallet.ui.IvyWalletCtx
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,8 +56,18 @@ class SettingsViewModel @Inject constructor(
     private val logoutLogic: LogoutLogic,
     private val sharedPrefs: SharedPrefs,
     private val exportZipLogic: ExportZipLogic,
-    private val nav: Navigation
+    private val nav: Navigation,
+    @ApplicationContext private val appContext: Context,
 ) : ViewModel() {
+
+    val googleSignInClient: GoogleSignInClient by lazy {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("1016546210568-mm4urj4augbnvvr7elqsnvig2h2j6bv3.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+
+        GoogleSignIn.getClient(appContext, gso)
+    }
 
     private val _user = MutableLiveData<User?>()
     val user = _user.asLiveData()
@@ -276,6 +294,50 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+
+    fun loginWithGoogleNew(account: GoogleSignInAccount?) {
+        TestIdlingResource.increment()
+        viewModelScope.launch {
+//            session.initiate(authResponse)
+            Timber.d("Login with Google successful ${account?.email} ${account?.displayName}" )
+
+            saveUser(account)
+            start()
+
+
+//            _opGoogleSignIn.value = OpResult.success(Unit)
+//            router.googleLoginNext()
+        }
+
+
+
+//        _opGoogleSignIn.value = null
+
+        TestIdlingResource.decrement()
+    }
+
+    private suspend fun saveUser(account: GoogleSignInAccount?) {
+        val user = User(
+            email = account?.email ?: "",
+            authProviderType = AuthProviderType.GOOGLE,
+            firstName = account?.givenName ?: "",
+            lastName = account?.familyName,
+            profilePicture = account?.photoUrl?.toString(),
+            color = 0,
+            testUser = false,
+            id = UUID.randomUUID()
+        )
+
+        ioThread {
+            ivySession.initiate(AuthResponse(user, ""))
+            settingsDao.save(
+                settingsDao.findFirst().copy(
+                    name = account?.displayName ?: account?.familyName ?: account?.givenName ?: ""
+                )
+            )
+        }
+    }
+
 
     fun setLockApp(lockApp: Boolean) {
         viewModelScope.launch {
